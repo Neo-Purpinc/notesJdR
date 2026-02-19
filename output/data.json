@@ -41,6 +41,18 @@
       {
         "name": "Kylian Mbappé",
         "note": 4
+      },
+      {
+        "name": "Brahim Diaz",
+        "note": null
+      },
+      {
+        "name": "Thiago Pitarch",
+        "note": null
+      },
+      {
+        "name": "Dani Carvajal",
+        "note": null
       }
     ]
   },
@@ -86,6 +98,26 @@
       {
         "name": "Jacobo García",
         "note": 7
+      },
+      {
+        "name": "David Alaba",
+        "note": null
+      },
+      {
+        "name": "Dani Carvajal",
+        "note": null
+      },
+      {
+        "name": "Dani Ceballos",
+        "note": null
+      },
+      {
+        "name": "Brahim Diaz",
+        "note": null
+      },
+      {
+        "name": "Jorge Cestero",
+        "note": null
       }
     ]
   },
@@ -131,6 +163,22 @@
       {
         "name": "Jacobo García",
         "note": 2
+      },
+      {
+        "name": "Brahim Diaz",
+        "note": null
+      },
+      {
+        "name": "Trent Alexander-Arnold",
+        "note": null
+      },
+      {
+        "name": "Franco Mastantuono",
+        "note": null
+      },
+      {
+        "name": "Jorge Cestero",
+        "note": null
       }
     ]
   },
@@ -180,6 +228,22 @@
       {
         "name": "Brahim Diaz",
         "note": 5
+      },
+      {
+        "name": "Jude Bellingham",
+        "note": null
+      },
+      {
+        "name": "Jacobo García",
+        "note": null
+      },
+      {
+        "name": "David Alaba",
+        "note": null
+      },
+      {
+        "name": "Rodrygo",
+        "note": null
       }
     ]
   },
@@ -229,6 +293,18 @@
       {
         "name": "Eduardo Camavinga",
         "note": 3
+      },
+      {
+        "name": "David Alaba",
+        "note": null
+      },
+      {
+        "name": "Jorge Cestero",
+        "note": null
+      },
+      {
+        "name": "Brahim Diaz",
+        "note": null
       }
     ]
   },
@@ -236,7 +312,7 @@
     "url": "https://lejournaldureal.fr/2026/01/24/villarreal-real-madrid-notes?categorie=actualites",
     "title": "Villarreal - Real Madrid (0-2) : les notes des Madrilènes !",
     "date": "2026-01-24",
-    "competition": "Ligue des Champions",
+    "competition": "Liga",
     "opponent": "Villarreal",
     "players": [
       {
@@ -270,6 +346,14 @@
       {
         "name": "Vinicius Jr",
         "note": 6
+      },
+      {
+        "name": "Jacobo García",
+        "note": null
+      },
+      {
+        "name": "Brahim Diaz",
+        "note": null
       }
     ]
   },
@@ -319,6 +403,18 @@
       {
         "name": "Dani Ceballos",
         "note": 4
+      },
+      {
+        "name": "Jacobo García",
+        "note": null
+      },
+      {
+        "name": "Dani Carvajal",
+        "note": null
+      },
+      {
+        "name": "Dani Mesonero",
+        "note": null
       }
     ]
   },
@@ -326,7 +422,7 @@
     "url": "https://lejournaldureal.fr/2026/01/17/real-madrid-levante-notes?categorie=actualites",
     "title": "Real Madrid - Levante (2-0) : les notes des Madrilènes !",
     "date": "2026-01-17",
-    "competition": "Ligue des Champions",
+    "competition": "Liga",
     "opponent": "Levante",
     "players": [
       {
@@ -364,6 +460,14 @@
       {
         "name": "Vinicius Jr",
         "note": 4
+      },
+      {
+        "name": "Dani Ceballos",
+        "note": null
+      },
+      {
+        "name": "David Alaba",
+        "note": null
       }
     ]
   },
@@ -371,7 +475,7 @@
     "url": "https://lejournaldureal.fr/2026/01/14/albacete-real-madrid-notes?categorie=actualites",
     "title": "Albacete - Real Madrid (3-2) : les notes du match !",
     "date": "2026-01-14",
-    "competition": "Ligue des Champions",
+    "competition": "Coupe du Roi",
     "opponent": "Albacete",
     "players": [
       {
@@ -405,6 +509,26 @@
       {
         "name": "Vinicius Jr",
         "note": 2
+      },
+      {
+        "name": "David Alaba",
+        "note": null
+      },
+      {
+        "name": "Eduardo Camvinga",
+        "note": null
+      },
+      {
+        "name": "Dani Carvajal",
+        "note": null
+      },
+      {
+        "name": "Cesar Palacios",
+        "note": null
+      },
+      {
+        "name": "Miguel Angel",
+        "note": null
       }
     ]
   },
@@ -450,6 +574,26 @@
       {
         "name": "Vinicius Jr",
         "note": 7
+      },
+      {
+        "name": "Arda Güler",
+        "note": null
+      },
+      {
+        "name": "Kylian Mbappé",
+        "note": null
+      },
+      {
+        "name": "David Alaba",
+        "note": null
+      },
+      {
+        "name": "Dani Ceballos",
+        "note": null
+      },
+      {
+        "name": "Franco Mastantuono",
+        "note": null
       }
     ]
   },
@@ -495,6 +639,22 @@
       {
         "name": "Vinicius Jr",
         "note": 3
+      },
+      {
+        "name": "Ferland Mendy",
+        "note": null
+      },
+      {
+        "name": "Arda Güler",
+        "note": null
+      },
+      {
+        "name": "Franco Mastantuono",
+        "note": null
+      },
+      {
+        "name": "Dani Ceballos",
+        "note": null
       }
     ]
   },
@@ -540,6 +700,22 @@
       {
         "name": "Vinicius Jr",
         "note": 4
+      },
+      {
+        "name": "Arda Güler",
+        "note": null
+      },
+      {
+        "name": "Franco Mastantuono",
+        "note": null
+      },
+      {
+        "name": "Dani Ceballos",
+        "note": null
+      },
+      {
+        "name": "Ferland Mendy",
+        "note": null
       }
     ]
   },
@@ -547,7 +723,7 @@
     "url": "https://lejournaldureal.fr/2025/12/20/real-madrid-seville-notes?categorie=actualites",
     "title": "Real Madrid - Séville (2-0) : les notes des Madrilènes !",
     "date": "2025-12-20",
-    "competition": "Ligue des Champions",
+    "competition": "Liga",
     "opponent": "Séville",
     "players": [
       {
@@ -561,6 +737,18 @@
       {
         "name": "Aurélien Tchouaméni",
         "note": 6
+      },
+      {
+        "name": "Eduardo Camavinga",
+        "note": null
+      },
+      {
+        "name": "Jacobo García",
+        "note": null
+      },
+      {
+        "name": "David Jimenez",
+        "note": null
       }
     ]
   },
@@ -602,6 +790,22 @@
       {
         "name": "Endrick Felipe",
         "note": 8
+      },
+      {
+        "name": "Rodrygo",
+        "note": null
+      },
+      {
+        "name": "Aurélien Tchouaméni",
+        "note": null
+      },
+      {
+        "name": "Jude Bellingham",
+        "note": null
+      },
+      {
+        "name": "Jorge Cestero",
+        "note": null
       }
     ]
   },
@@ -609,7 +813,7 @@
     "url": "https://lejournaldureal.fr/2025/12/14/alaves-real-madrid-notes-2?categorie=actualites",
     "title": "Alavés - Real Madrid (1-2) : les notes des Madrilènes !",
     "date": "2025-12-14",
-    "competition": "Ligue des Champions",
+    "competition": "Coupe du Roi",
     "opponent": "Alavés",
     "players": [
       {
@@ -631,6 +835,22 @@
       {
         "name": "Kylian Mbappé",
         "note": 6
+      },
+      {
+        "name": "Dean Huijsen",
+        "note": null
+      },
+      {
+        "name": "Brahim Diaz",
+        "note": null
+      },
+      {
+        "name": "Jacobo García",
+        "note": null
+      },
+      {
+        "name": "Franco Mastantuono",
+        "note": null
       }
     ]
   },
@@ -680,6 +900,14 @@
       {
         "name": "Arda Güler",
         "note": 5
+      },
+      {
+        "name": "Brahim Diaz",
+        "note": null
+      },
+      {
+        "name": "Endrick Felipe",
+        "note": null
       }
     ]
   },
@@ -774,6 +1002,22 @@
       {
         "name": "Raul Asencio",
         "note": 5
+      },
+      {
+        "name": "Arda Güler",
+        "note": null
+      },
+      {
+        "name": "Rodrygo",
+        "note": null
+      },
+      {
+        "name": "Jacobo García",
+        "note": null
+      },
+      {
+        "name": "Brahim Diaz",
+        "note": null
       }
     ]
   },
@@ -823,6 +1067,14 @@
       {
         "name": "Eduardo Camavinga",
         "note": 4
+      },
+      {
+        "name": "Rodrygo",
+        "note": null
+      },
+      {
+        "name": "Alvaro Carreras",
+        "note": null
       }
     ]
   },
@@ -872,6 +1124,14 @@
       {
         "name": "Vinicius Jr",
         "note": 4
+      },
+      {
+        "name": "Jacobo García",
+        "note": null
+      },
+      {
+        "name": "Brahim Diaz",
+        "note": null
       }
     ]
   },
@@ -921,6 +1181,18 @@
       {
         "name": "Éder Militão",
         "note": 5
+      },
+      {
+        "name": "Dani Ceballos",
+        "note": null
+      },
+      {
+        "name": "Rodrygo",
+        "note": null
+      },
+      {
+        "name": "Trent Alexander-Arnold",
+        "note": null
       }
     ]
   },
@@ -970,6 +1242,18 @@
       {
         "name": "Vinicius Jr",
         "note": 4
+      },
+      {
+        "name": "Rodrygo",
+        "note": null
+      },
+      {
+        "name": "Trent Alexander-Arnold",
+        "note": null
+      },
+      {
+        "name": "Brahim Diaz",
+        "note": null
       }
     ]
   },
@@ -999,6 +1283,26 @@
       {
         "name": "Franco Mastantuono",
         "note": 5
+      },
+      {
+        "name": "Dani Ceballos",
+        "note": null
+      },
+      {
+        "name": "Eduardo Camavinga",
+        "note": null
+      },
+      {
+        "name": "Raul Asencio",
+        "note": null
+      },
+      {
+        "name": "Endrick Felipe",
+        "note": null
+      },
+      {
+        "name": "Rodrygo",
+        "note": null
       }
     ]
   },
@@ -1052,6 +1356,22 @@
       {
         "name": "Brahim Diaz",
         "note": 6
+      },
+      {
+        "name": "Dani Carvajal",
+        "note": null
+      },
+      {
+        "name": "Rodrygo",
+        "note": null
+      },
+      {
+        "name": "Jacobo García",
+        "note": null
+      },
+      {
+        "name": "Dani Ceballos",
+        "note": null
       }
     ]
   },
@@ -1101,6 +1421,18 @@
       {
         "name": "Vinicius Jr",
         "note": 5
+      },
+      {
+        "name": "Eduardo Camavinga",
+        "note": null
+      },
+      {
+        "name": "Franco Mastantuono",
+        "note": null
+      },
+      {
+        "name": "Jacobo García",
+        "note": null
       }
     ]
   },
@@ -1154,6 +1486,14 @@
       {
         "name": "Raul Asencio",
         "note": 5
+      },
+      {
+        "name": "Jacobo García",
+        "note": null
+      },
+      {
+        "name": "Brahim Diaz",
+        "note": null
       }
     ]
   },
@@ -1161,7 +1501,7 @@
     "url": "https://lejournaldureal.fr/2025/10/04/real-madrid-villarreal-notes-3?categorie=actualites",
     "title": "Real Madrid - Villarreal (3-1) : les notes de la rencontre !",
     "date": "2025-10-04",
-    "competition": "Ligue des Champions",
+    "competition": "Liga",
     "opponent": "Villarreal",
     "players": [
       {
@@ -1195,6 +1535,18 @@
       {
         "name": "Brahim Diaz",
         "note": 6
+      },
+      {
+        "name": "Rodrygo",
+        "note": null
+      },
+      {
+        "name": "Jude Bellingham",
+        "note": null
+      },
+      {
+        "name": "Eduardo Camavinga",
+        "note": null
       }
     ]
   },
@@ -1202,7 +1554,7 @@
     "url": "https://lejournaldureal.fr/2025/09/30/almaty-real-madrid-notes?categorie=actualites",
     "title": "Kaïrat Almaty - Real Madrid (0-5) : les notes du match !",
     "date": "2025-09-30",
-    "competition": "Liga",
+    "competition": "Ligue des Champions",
     "opponent": "Kaïrat Almaty",
     "players": [
       {
@@ -1244,6 +1596,22 @@
       {
         "name": "Vinicius Jr",
         "note": 5
+      },
+      {
+        "name": "Brahim Diaz",
+        "note": null
+      },
+      {
+        "name": "Rodrygo",
+        "note": null
+      },
+      {
+        "name": "Jude Bellingham",
+        "note": null
+      },
+      {
+        "name": "Eduardo Camavinga",
+        "note": null
       }
     ]
   },
@@ -1297,6 +1665,22 @@
       {
         "name": "Raul Asencio",
         "note": 4
+      },
+      {
+        "name": "Eduardo Camavinga",
+        "note": null
+      },
+      {
+        "name": "Franco Mastantuono",
+        "note": null
+      },
+      {
+        "name": "Rodrygo",
+        "note": null
+      },
+      {
+        "name": "Jacobo García",
+        "note": null
       }
     ]
   },
@@ -1346,6 +1730,26 @@
       {
         "name": "Vinicius Jr",
         "note": 8
+      },
+      {
+        "name": "Aurélien Tchouaméni",
+        "note": null
+      },
+      {
+        "name": "Jude Bellingham",
+        "note": null
+      },
+      {
+        "name": "Rodrygo",
+        "note": null
+      },
+      {
+        "name": "David Alaba",
+        "note": null
+      },
+      {
+        "name": "Eduardo Camavinga",
+        "note": null
       }
     ]
   },
@@ -1353,7 +1757,7 @@
     "url": "https://lejournaldureal.fr/2025/09/20/real-madrid-espanyol-notes-2?categorie=actualites",
     "title": "Real Madrid - Espanyol (2-0) : les notes de la rencontre !",
     "date": "2025-09-20",
-    "competition": "Ligue des Champions",
+    "competition": "Liga",
     "opponent": "Espanyol",
     "players": [
       {
@@ -1389,7 +1793,7 @@
         "note": 6
       },
       {
-        "name": "Mastantuono",
+        "name": "Franco Mastantuono",
         "note": 5
       },
       {
@@ -1399,6 +1803,22 @@
       {
         "name": "Kylian Mbappé",
         "note": 7
+      },
+      {
+        "name": "Rodrygo",
+        "note": null
+      },
+      {
+        "name": "Brahim Diaz",
+        "note": null
+      },
+      {
+        "name": "Jude Bellingham",
+        "note": null
+      },
+      {
+        "name": "Eduardo Camavinga",
+        "note": null
       }
     ]
   },
@@ -1448,6 +1868,10 @@
       {
         "name": "Dani Carvajal",
         "note": 1
+      },
+      {
+        "name": "Raul Asencio",
+        "note": null
       }
     ]
   },
@@ -1501,6 +1925,22 @@
       {
         "name": "Federico Valverde",
         "note": 5
+      },
+      {
+        "name": "Jacobo García",
+        "note": null
+      },
+      {
+        "name": "Raul Asencio",
+        "note": null
+      },
+      {
+        "name": "Trent Alexander-Arnold",
+        "note": null
+      },
+      {
+        "name": "David Alaba",
+        "note": null
       }
     ]
   },
@@ -1554,6 +1994,22 @@
       {
         "name": "Brahim Diaz",
         "note": 5
+      },
+      {
+        "name": "Rodrygo",
+        "note": null
+      },
+      {
+        "name": "Dani Ceballos",
+        "note": null
+      },
+      {
+        "name": "Dani Carvajal",
+        "note": null
+      },
+      {
+        "name": "Jacobo García",
+        "note": null
       }
     ]
   },
@@ -1587,6 +2043,22 @@
       {
         "name": "Federico Valverde",
         "note": 6
+      },
+      {
+        "name": "Brahim Diaz",
+        "note": null
+      },
+      {
+        "name": "Jacobo García",
+        "note": null
+      },
+      {
+        "name": "Dani Ceballos",
+        "note": null
+      },
+      {
+        "name": "Trent Alexander-Arnold",
+        "note": null
       }
     ]
   },
@@ -1632,6 +2104,18 @@
       {
         "name": "Dani Carvajal",
         "note": 7
+      },
+      {
+        "name": "Franco Mastantuono",
+        "note": null
+      },
+      {
+        "name": "Jacobo García",
+        "note": null
+      },
+      {
+        "name": "Dani Ceballos",
+        "note": null
       }
     ]
   },
@@ -1685,6 +2169,38 @@
       {
         "name": "Kylian Mbappé",
         "note": 9
+      },
+      {
+        "name": "Jacobo García",
+        "note": null
+      },
+      {
+        "name": "Antonio Rüdiger",
+        "note": null
+      },
+      {
+        "name": "Alaba",
+        "note": null
+      },
+      {
+        "name": "Raul Asencio",
+        "note": null
+      },
+      {
+        "name": "Dani Carvajal",
+        "note": null
+      },
+      {
+        "name": "Dani Yanez",
+        "note": null
+      },
+      {
+        "name": "Thiago Pitarch",
+        "note": null
+      },
+      {
+        "name": "Roberto Marin",
+        "note": null
       }
     ]
   }

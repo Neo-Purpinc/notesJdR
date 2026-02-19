@@ -101,21 +101,27 @@ def compute_stats(
 
     results = []
     for player_name, matches in player_matches.items():
-        all_notes = [m["note"] for m in matches]
-        moyenne_globale = round(statistics.mean(all_notes), 2) if all_notes else 0.0
-        ecart_type = round(statistics.stdev(all_notes), 2) if len(all_notes) > 1 else 0.0
+        rated = [m["note"] for m in matches if m["note"] is not None]
+        nb_notes = len(rated)
+        nb_non_notes = len(matches) - nb_notes
+
+        moyenne_globale = round(statistics.mean(rated), 2) if rated else 0.0
+        ecart_type = round(statistics.stdev(rated), 2) if len(rated) > 1 else 0.0
 
         # Ventilation par compétition
         par_competition: dict[str, dict] = {}
-        comp_groups: dict[str, list[int]] = defaultdict(list)
+        comp_groups: dict[str, list[int | None]] = defaultdict(list)
         for m in matches:
             comp_groups[m["competition"]].append(m["note"])
 
         for comp, notes in comp_groups.items():
+            comp_rated = [n for n in notes if n is not None]
+            comp_non_notes = sum(1 for n in notes if n is None)
             par_competition[comp] = {
-                "moyenne": round(statistics.mean(notes), 2),
-                "nb_matchs": len(notes),
-                "notes": notes,
+                "moyenne": round(statistics.mean(comp_rated), 2) if comp_rated else 0.0,
+                "nb_matchs": len(comp_rated),
+                "nb_non_notes": comp_non_notes,
+                "notes": comp_rated,
             }
 
         # Détail matchs trié par date
@@ -124,10 +130,12 @@ def compute_stats(
         results.append({
             "player_name": player_name,
             "moyenne_globale": moyenne_globale,
-            "nb_matchs": len(all_notes),
+            "nb_matchs": nb_notes,
+            "nb_matchs_non_notes": nb_non_notes,
+            "nb_matchs_total": len(matches),
             "ecart_type": ecart_type,
-            "note_max": max(all_notes) if all_notes else 0,
-            "note_min": min(all_notes) if all_notes else 0,
+            "note_max": max(rated) if rated else 0,
+            "note_min": min(rated) if rated else 0,
             "par_competition": par_competition,
             "detail_matchs": detail_matchs,
         })
@@ -172,13 +180,15 @@ def _print_with_tabulate(stats: list[dict], competition_filter: str | None) -> N
         all_comps.update(s["par_competition"].keys())
     comps_sorted = sorted(all_comps)
 
-    headers = ["Joueur", "Moy. glob.", "Matchs", "Min", "Max", "σ"] + comps_sorted
+    headers = ["Joueur", "Moy. glob.", "Notés", "Non notés", "Total", "Min", "Max", "σ"] + comps_sorted
     rows = []
     for s in stats:
         row = [
             s["player_name"],
             f"{s['moyenne_globale']:.2f}",
             s["nb_matchs"],
+            s.get("nb_matchs_non_notes", 0),
+            s.get("nb_matchs_total", s["nb_matchs"]),
             s["note_min"],
             s["note_max"],
             f"{s['ecart_type']:.2f}",
@@ -186,7 +196,9 @@ def _print_with_tabulate(stats: list[dict], competition_filter: str | None) -> N
         for comp in comps_sorted:
             if comp in s["par_competition"]:
                 cd = s["par_competition"][comp]
-                row.append(f"{cd['moyenne']:.1f} ({cd['nb_matchs']})")
+                nn = cd.get("nb_non_notes", 0)
+                suffix = f" +{nn}nn" if nn > 0 else ""
+                row.append(f"{cd['moyenne']:.1f} ({cd['nb_matchs']}{suffix})")
             else:
                 row.append("-")
         rows.append(row)
@@ -206,13 +218,15 @@ def _print_plain(stats: list[dict], competition_filter: str | None) -> None:
         title += f" — {competition_filter}"
     title += " ==="
     print(f"\n{title}")
-    print(f"{'Joueur':<35} {'Moy':>6} {'Matchs':>6} {'Min':>4} {'Max':>4}")
-    print("-" * 60)
+    print(f"{'Joueur':<35} {'Moy':>6} {'Notés':>6} {'Non not.':>8} {'Total':>6} {'Min':>4} {'Max':>4}")
+    print("-" * 72)
     for s in stats:
         print(
             f"{s['player_name']:<35} "
             f"{s['moyenne_globale']:>6.2f} "
             f"{s['nb_matchs']:>6} "
+            f"{s.get('nb_matchs_non_notes', 0):>8} "
+            f"{s.get('nb_matchs_total', s['nb_matchs']):>6} "
             f"{s['note_min']:>4} "
             f"{s['note_max']:>4}"
         )
@@ -223,7 +237,9 @@ def print_player_detail(player_stats: dict) -> None:
     """Affiche le détail d'un joueur."""
     print(f"\n=== {player_stats['player_name']} ===")
     print(f"Moyenne globale : {player_stats['moyenne_globale']:.2f}/10")
-    print(f"Matchs joués   : {player_stats['nb_matchs']}")
+    print(f"Matchs notés   : {player_stats['nb_matchs']}")
+    print(f"Non notés      : {player_stats.get('nb_matchs_non_notes', 0)}")
+    print(f"Total appars.  : {player_stats.get('nb_matchs_total', player_stats['nb_matchs'])}")
     print(f"Note min / max : {player_stats['note_min']} / {player_stats['note_max']}")
     print(f"Écart-type     : {player_stats['ecart_type']:.2f}")
 

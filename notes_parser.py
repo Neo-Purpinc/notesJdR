@@ -12,6 +12,11 @@ logger = logging.getLogger(__name__)
 # Normalisation des noms
 # ---------------------------------------------------------------------------
 
+# Mapping variantes de noms → nom canonique (à compléter au fil du temps)
+PLAYER_NAME_MAPPING: dict[str, str] = {
+    "Mastantuono": "Franco Mastantuono",
+}
+
 NAME_ALIASES: dict[str, str] = {
     # Gardiens
     "Courtois": "Thibaut Courtois",
@@ -70,8 +75,23 @@ _NOTE_RE = re.compile(
     re.IGNORECASE,
 )
 
-# Lignes "Non noté" à ignorer
+# Lignes "Non noté" à ignorer dans _NOTE_RE (sécurité)
 _NON_NOTE_RE = re.compile(r"Non\s+not[ée]", re.IGNORECASE)
+
+# Structure réelle : <p><strong>Nom, entré...</strong>: Non noté.</p>
+# → on capte tout le bloc <p>, puis on nettoie les balises
+_NON_NOTE_BLOCK_RE = re.compile(r"<p[^>]*>(.*?)</p>", re.IGNORECASE | re.DOTALL)
+
+
+def _extract_non_noted_name(block_html: str) -> str | None:
+    """Extrait le nom depuis le HTML d'un bloc <p> contenant 'Non noté'."""
+    text = re.sub(r"<[^>]+>", "", block_html)       # supprime les balises
+    text = re.sub(r"\s+", " ", text).strip()
+    if not text:
+        return None
+    # Nom = tout ce qui précède la première virgule, parenthèse ou deux-points
+    m = re.match(r"([^:,(]+?)(?=[,:(]|$)", text)
+    return m.group(1).strip() if m else None
 
 # Nettoyage du nom brut (supprime la partie substitution qui resterait)
 _SUBST_RE = re.compile(
@@ -93,6 +113,11 @@ def normalize_name(raw: str) -> str:
     last_name = name.split()[-1] if name else name
     if last_name in NAME_ALIASES:
         return NAME_ALIASES[last_name]
+    # Applique PLAYER_NAME_MAPPING (variantes de noms complets)
+    if name in PLAYER_NAME_MAPPING:
+        return PLAYER_NAME_MAPPING[name]
+    if last_name in PLAYER_NAME_MAPPING:
+        return PLAYER_NAME_MAPPING[last_name]
     return name
 
 
@@ -104,6 +129,32 @@ _OG_IMAGE_RE = re.compile(
     r'<meta\s+(?:[^>]*?\s+)?property=["\']og:image["\']\s+content=["\']([^"\']+)["\']',
     re.IGNORECASE,
 )
+
+# Priorité 0 : détection depuis le titre (la plus fiable)
+_TITLE_COMP_RULES = [
+    (re.compile(r"ligue\s+des\s+champions|champions\s+league", re.IGNORECASE), "Ligue des Champions"),
+    (re.compile(r"supercoupe|supercopa", re.IGNORECASE), "Supercoupe d'Espagne"),
+    (re.compile(r"coupe\s+du\s+roi|copa\s+del\s+rey", re.IGNORECASE), "Coupe du Roi"),
+    (re.compile(r"intercontinental", re.IGNORECASE), "Coupe Intercontinentale"),
+    (re.compile(r"\bamical\b|friendly", re.IGNORECASE), "Amical"),
+]
+
+# Priorité 1 : tags WordPress dans le payload RSC (très fiable — posés par le rédacteur)
+# Le payload Next.js contient du JSON doublement échappé : \" devient \" dans la string Python.
+# On recherche \"tags\":[ et on inspecte les 800 premiers octets (les tags de l'article courant).
+_WP_TAGS_RE = re.compile(r'\\"tags\\":\[')
+
+_WP_TAGS_COMP_MAP = [
+    ("ligue-des-champions", "Ligue des Champions"),
+    ("supercoupe", "Supercoupe d'Espagne"),
+    ("supercopa", "Supercoupe d'Espagne"),
+    ("copa-del-rey", "Coupe du Roi"),
+    ("coupe-du-roi", "Coupe du Roi"),
+    ("intercontinental", "Coupe Intercontinentale"),
+    ("pre-season", "Amical"),
+    ("friendly", "Amical"),
+    ("amical", "Amical"),
+]
 
 # Mapping fichier og:image → compétition
 _OG_COMPETITION_MAP = [
@@ -150,27 +201,44 @@ _TEXT_COMPETITION_RULES = [
 ]
 
 
-def detect_competition(html: str) -> str:
-    """Détecte la compétition via og:image d'abord, puis le texte de l'article."""
-    # Priorité 1 : og:image filename
+def detect_competition(html: str, title: str = "") -> str:
+    """Détecte la compétition via le titre, tags WP, og:image, puis le corps de l'article."""
+    # Priorité 0 : titre (le plus fiable — écrit par le journaliste)
+    if title:
+        for pattern, competition in _TITLE_COMP_RULES:
+            if pattern.search(title):
+                return competition
+
+    # Priorité 1 : tags WordPress dans le payload RSC
+    # On inspecte les 800 premiers octets après \"tags\":[ pour rester dans les tags
+    # de l'article courant (les articles liés apparaissent bien plus loin).
+    tags_m = _WP_TAGS_RE.search(html)
+    if tags_m:
+        tags_window = html[tags_m.start(): tags_m.start() + 800]
+        for slug, competition in _WP_TAGS_COMP_MAP:
+            if slug in tags_window:
+                return competition
+
+    # Priorité 3 : og:image filename
     og_match = _OG_IMAGE_RE.search(html)
     if og_match:
         filename = og_match.group(1).split("/")[-1].lower()
-        # Ignorer les images génériques
         is_generic = re.match(r"nouveau-projet[-_]?\d*\.", filename) or re.match(r"image[-_]?\d*\.", filename)
         if not is_generic:
             for keywords, competition in _OG_COMPETITION_MAP:
                 if any(kw in filename for kw in keywords):
                     return competition
 
-    # Priorité 2 : texte de l'article
-    body_text = re.sub(r"<[^>]+>", " ", html)
+    # Priorité 4 : texte du corps de l'article uniquement (évite les faux positifs
+    # de la sidebar/footer qui peut mentionner d'autres compétitions)
+    article_m = re.search(r"<article[^>]*>(.*?)</article>", html, re.DOTALL | re.IGNORECASE)
+    body_text = re.sub(r"<[^>]+>", " ", article_m.group(1) if article_m else html)
 
     for pattern, competition in _TEXT_COMPETITION_RULES:
         if pattern.search(body_text):
             return competition
 
-    return "Inconnue"
+    return "Liga"  # défaut : toutes les autres rencontres sont en Liga
 
 
 # ---------------------------------------------------------------------------
@@ -222,7 +290,7 @@ def extract_opponent(title: str) -> str:
 @dataclass
 class PlayerRating:
     name: str
-    note: int
+    note: int | None  # None = "Non noté" (remplaçant entré très tard)
 
 
 @dataclass
@@ -249,7 +317,7 @@ def parse_article(url: str, html: str, date: str) -> ArticleData | None:
             return None
 
     title = extract_title(html)
-    competition = detect_competition(html)
+    competition = detect_competition(html, title=title)
     opponent = extract_opponent(title)
 
     players: list[PlayerRating] = []
@@ -282,6 +350,24 @@ def parse_article(url: str, html: str, date: str) -> ArticleData | None:
 
         seen_names.add(canonical)
         players.append(PlayerRating(name=canonical, note=note))
+
+    # --- Joueurs non notés ("Non noté") ---
+    # Structure réelle : <p><strong>Nom, entré...</strong>: Non noté.</p>
+    for block_m in _NON_NOTE_BLOCK_RE.finditer(html):
+        block = block_m.group(1)
+        if not _NON_NOTE_RE.search(block):
+            continue
+        raw_name = _extract_non_noted_name(block)
+        if not raw_name:
+            continue
+        canonical = normalize_name(raw_name)
+        if canonical == "_COACH_":
+            continue
+        if canonical in seen_names:
+            continue  # déjà noté dans cet article
+        seen_names.add(canonical)
+        players.append(PlayerRating(name=canonical, note=None))
+        logger.debug("Non-rated player: %s in %s", canonical, url)
 
     if not players:
         logger.info("No valid player ratings found in %s", url)

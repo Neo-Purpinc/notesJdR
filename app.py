@@ -85,6 +85,8 @@ def flatten_to_df(articles: list[dict]) -> pd.DataFrame:
     df = pd.DataFrame(rows)
     if not df.empty:
         df = df.sort_values("date")
+        # note peut être None (Non noté) → NaN pour pandas
+        df["note"] = pd.to_numeric(df["note"], errors="coerce")
     return df
 
 
@@ -101,7 +103,9 @@ def stats_to_df(stats: list[dict]) -> pd.DataFrame:
         row = {
             "Joueur": s["player_name"],
             "Moy. globale": s["moyenne_globale"],
-            "Matchs": s["nb_matchs"],
+            "Matchs notés": s["nb_matchs"],
+            "Non notés": s.get("nb_matchs_non_notes", 0),
+            "Total": s.get("nb_matchs_total", s["nb_matchs"]),
             "Note min": s.get("note_min", "-"),
             "Note max": s.get("note_max", "-"),
             "Écart-type": s.get("ecart_type", 0.0),
@@ -110,10 +114,12 @@ def stats_to_df(stats: list[dict]) -> pd.DataFrame:
             if comp in s.get("par_competition", {}):
                 cd = s["par_competition"][comp]
                 row[f"{COMPETITION_ICONS.get(comp, '')} {comp}"] = cd["moyenne"]
-                row[f"  {comp} (matchs)"] = cd["nb_matchs"]
+                row[f"  {comp} (notés)"] = cd["nb_matchs"]
+                row[f"  {comp} (non notés)"] = cd.get("nb_non_notes", 0)
             else:
                 row[f"{COMPETITION_ICONS.get(comp, '')} {comp}"] = None
-                row[f"  {comp} (matchs)"] = 0
+                row[f"  {comp} (notés)"] = 0
+                row[f"  {comp} (non notés)"] = 0
         rows.append(row)
 
     return pd.DataFrame(rows)
@@ -211,13 +217,14 @@ def tab_tableau(stats: list[dict], selected_comps: list[str], selected_players: 
         st.warning("Aucun joueur trouvé avec les filtres sélectionnés.")
         return
 
-    # Colonnes de notes à colorer
-    note_cols = [c for c in df.columns if "Moy." in c or any(
-        comp in c for comp in ["Liga", "Champions", "Coupe", "Super", "Intercontinental", "Amical"]
-    ) and "(matchs)" not in c]
+    # Colonnes de notes à colorer (moyennes uniquement, pas les colonnes de comptage)
+    note_cols = [c for c in df.columns if "Moy." in c or (
+        any(comp in c for comp in ["Liga", "Champions", "Coupe", "Super", "Intercontinental", "Amical"])
+        and "(notés)" not in c and "(non notés)" not in c
+    )]
 
-    min_matchs = st.slider("Minimum de matchs", 1, 20, 1, key="min_matchs_tab")
-    df_filtered = df[df["Matchs"] >= min_matchs]
+    min_matchs = st.slider("Minimum de matchs notés", 1, 20, 1, key="min_matchs_tab")
+    df_filtered = df[df["Matchs notés"] >= min_matchs]
 
     st.caption(f"{len(df_filtered)} joueurs affichés")
 
@@ -481,7 +488,7 @@ def tab_detail(df: pd.DataFrame, selected_players: list[str], selected_comps: li
         mask &= df["joueur"] == player_filter
     if comp_filter != "Toutes":
         mask &= df["competition"] == comp_filter
-    mask &= df["note"] >= note_min
+    mask &= (df["note"] >= note_min) | df["note"].isna()
 
     df_f = df[mask].copy()
 
@@ -507,18 +514,26 @@ def tab_detail(df: pd.DataFrame, selected_players: list[str], selected_comps: li
 
     st.caption(f"{len(df_display)} lignes")
 
-    styled = df_display.style.applymap(color_note, subset=["Note"]).format({"Note": "{:.0f}"})
+    styled = df_display.style.applymap(color_note, subset=["Note"]).format(
+        {"Note": lambda x: "—" if pd.isna(x) else f"{x:.0f}"}
+    )
     st.dataframe(styled, use_container_width=True, height=600)
 
     # Stats rapides
     if player_filter != "Tous" and not df_f.empty:
         st.markdown("---")
         st.subheader(f"Résumé — {player_filter}")
-        mc1, mc2, mc3, mc4 = st.columns(4)
-        mc1.metric("Matchs", len(df_f))
-        mc2.metric("Moyenne", f"{df_f['note'].mean():.2f}/10")
-        mc3.metric("Note max", f"{df_f['note'].max()}/10")
-        mc4.metric("Note min", f"{df_f['note'].min()}/10")
+        rated_f = df_f[df_f["note"].notna()]
+        non_noted_count = int(df_f["note"].isna().sum())
+        mc1, mc2, mc3, mc4, mc5 = st.columns(5)
+        mc1.metric("Matchs notés", len(rated_f))
+        mc2.metric("Non notés", non_noted_count)
+        mc3.metric("Total apparitions", len(df_f))
+        mc4.metric("Moyenne", f"{rated_f['note'].mean():.2f}/10" if not rated_f.empty else "—")
+        mc5.metric(
+            "Max / Min",
+            f"{int(rated_f['note'].max())} / {int(rated_f['note'].min())}" if not rated_f.empty else "—",
+        )
 
 
 # ---------------------------------------------------------------------------
