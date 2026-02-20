@@ -20,7 +20,7 @@ import streamlit as st
 
 st.set_page_config(
     page_title="Notes Real Madrid 2025-2026",
-    page_icon="⚽",
+    page_icon=None,
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -33,15 +33,7 @@ OUTPUT_DIR = Path("output")
 DATA_FILE = OUTPUT_DIR / "data.json"
 STATS_FILE = OUTPUT_DIR / "stats.json"
 
-COMPETITION_ICONS = {
-    "Liga": "🇪🇸",
-    "Ligue des Champions": "⭐",
-    "Coupe du Roi": "🏆",
-    "Supercoupe d'Espagne": "🥇",
-    "Coupe Intercontinentale": "🌍",
-    "Amical": "🎯",
-    "Inconnue": "❓",
-}
+COMPETITION_ICONS: dict[str, str] = {}  # plus d'icônes
 
 COLOR_SCALE = {
     "high": "#22c55e",
@@ -466,13 +458,13 @@ def stats_to_df(stats: list[dict]) -> pd.DataFrame:
         for comp in all_comps_sorted:
             if comp in s.get("par_competition", {}):
                 cd = s["par_competition"][comp]
-                row[f"{COMPETITION_ICONS.get(comp, '')} {comp}"] = cd["moyenne"]
-                row[f"  {comp} (notés)"] = cd["nb_matchs"]
-                row[f"  {comp} (non notés)"] = cd.get("nb_non_notes", 0)
+                row[comp] = cd["moyenne"]
+                row[f"{comp} (notés)"] = cd["nb_matchs"]
+                row[f"{comp} (non notés)"] = cd.get("nb_non_notes", 0)
             else:
-                row[f"{COMPETITION_ICONS.get(comp, '')} {comp}"] = None
-                row[f"  {comp} (notés)"] = 0
-                row[f"  {comp} (non notés)"] = 0
+                row[comp] = None
+                row[f"{comp} (notés)"] = 0
+                row[f"{comp} (non notés)"] = 0
         rows.append(row)
 
     return pd.DataFrame(rows)
@@ -505,7 +497,6 @@ def color_note(val) -> str:
 def render_sidebar(df: pd.DataFrame) -> tuple[list[str], list[str]]:
     st.sidebar.markdown("""
 <div class="sidebar-head">
-    <span class="sidebar-emblem">⚽</span>
     <span class="sidebar-club">REAL MADRID</span>
     <span class="sidebar-season">Saison 2025 — 2026</span>
 </div>
@@ -519,7 +510,7 @@ def render_sidebar(df: pd.DataFrame) -> tuple[list[str], list[str]]:
         "Compétition",
         options=all_comps,
         default=all_comps,
-        format_func=lambda c: f"{COMPETITION_ICONS.get(c, '')} {c}",
+        format_func=lambda c: c,
     )
 
     selected_players = st.sidebar.multiselect(
@@ -531,7 +522,7 @@ def render_sidebar(df: pd.DataFrame) -> tuple[list[str], list[str]]:
 
     st.sidebar.markdown("---")
 
-    if st.sidebar.button("🔄 Rafraîchir les données", use_container_width=True):
+    if st.sidebar.button("Rafraîchir les données", use_container_width=True):
         with st.spinner("Scraping en cours…"):
             try:
                 result = subprocess.run(
@@ -559,7 +550,7 @@ def render_sidebar(df: pd.DataFrame) -> tuple[list[str], list[str]]:
 # ---------------------------------------------------------------------------
 
 def tab_tableau(stats: list[dict], selected_comps: list[str], selected_players: list[str]) -> None:
-    st.header("📊 Tableau général")
+    st.header("Tableau général")
 
     if not stats:
         st.info("Aucune donnée disponible. Cliquez sur **Rafraîchir les données**.")
@@ -577,7 +568,7 @@ def tab_tableau(stats: list[dict], selected_comps: list[str], selected_players: 
 
     note_cols = [c for c in df.columns if "Moy." in c or (
         any(comp in c for comp in ["Liga", "Champions", "Coupe", "Super", "Intercontinental", "Amical"])
-        and "(notés)" not in c and "(non notés)" not in c
+        and "notés" not in c
     )]
 
     min_matchs = st.slider("Minimum de matchs notés", 1, 20, 1, key="min_matchs_tab")
@@ -592,7 +583,7 @@ def tab_tableau(stats: list[dict], selected_comps: list[str], selected_players: 
     st.dataframe(styled, use_container_width=True, height=600)
 
     csv = df_filtered.to_csv(index=False).encode("utf-8")
-    st.download_button("📥 Exporter CSV", csv, "notes_real_madrid.csv", "text/csv")
+    st.download_button("Exporter CSV", csv, "notes_real_madrid.csv", "text/csv")
 
 
 # ---------------------------------------------------------------------------
@@ -600,7 +591,7 @@ def tab_tableau(stats: list[dict], selected_comps: list[str], selected_players: 
 # ---------------------------------------------------------------------------
 
 def tab_evolution(df: pd.DataFrame, selected_players: list[str], selected_comps: list[str]) -> None:
-    st.header("📈 Évolution temporelle")
+    st.header("Évolution temporelle")
 
     if df.empty:
         st.info("Aucune donnée disponible.")
@@ -693,7 +684,7 @@ def tab_evolution(df: pd.DataFrame, selected_players: list[str], selected_comps:
 # ---------------------------------------------------------------------------
 
 def tab_comparaison(stats: list[dict], selected_players: list[str], selected_comps: list[str]) -> None:
-    st.header("🆚 Comparaison joueurs")
+    st.header("Comparaison joueurs")
 
     if not stats:
         st.info("Aucune donnée disponible.")
@@ -831,7 +822,7 @@ def tab_comparaison(stats: list[dict], selected_players: list[str], selected_com
 # ---------------------------------------------------------------------------
 
 def tab_detail(df: pd.DataFrame, selected_players: list[str], selected_comps: list[str]) -> None:
-    st.header("📋 Détail par match")
+    st.header("Détail par match")
 
     if df.empty:
         st.info("Aucune donnée disponible.")
@@ -872,10 +863,9 @@ def tab_detail(df: pd.DataFrame, selected_players: list[str], selected_comps: li
         st.warning("Aucun résultat pour ces filtres.")
         return
 
-    df_f["🏆"] = df_f["competition"].map(lambda c: COMPETITION_ICONS.get(c, ""))
     df_f["Date"] = df_f["date"].dt.strftime("%d/%m/%Y")
 
-    display_cols = ["Date", "joueur", "adversaire", "🏆", "competition", "note"]
+    display_cols = ["Date", "joueur", "adversaire", "competition", "note"]
     rename_map = {
         "joueur": "Joueur",
         "adversaire": "Adversaire",
@@ -930,7 +920,7 @@ def main() -> None:
 </div>
 """, unsafe_allow_html=True)
         st.warning(
-            "Aucune donnée trouvée. Cliquez sur **🔄 Rafraîchir les données** "
+            "Aucune donnée trouvée. Cliquez sur **Rafraîchir les données** "
             "dans la barre latérale pour lancer le scraping."
         )
         df_empty = pd.DataFrame(columns=["competition", "joueur", "date", "note", "adversaire", "url", "titre"])
@@ -979,10 +969,10 @@ def main() -> None:
 
     # Onglets
     tab1, tab2, tab3, tab4 = st.tabs([
-        "📊 Tableau général",
-        "📈 Évolution",
-        "🆚 Comparaison",
-        "📋 Détail",
+        "Tableau général",
+        "Évolution",
+        "Comparaison",
+        "Détail",
     ])
 
     df_filtered = df[df["competition"].isin(selected_comps)] if selected_comps else df
