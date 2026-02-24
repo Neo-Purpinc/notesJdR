@@ -128,14 +128,29 @@ section[data-testid="stVerticalBlock"] > div > div { gap: 0.5rem !important; }
 /* ─── Select & Multiselect ───────────────────── */
 [data-baseweb="select"] > div {
     background-color: var(--elevated) !important;
-    border-color: var(--border-2) !important;
+    border: 1px solid var(--border-2) !important;
     border-radius: var(--r) !important;
+    min-height: 44px !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
 }
-[data-baseweb="select"] > div > div { color: var(--text) !important; }
+[data-baseweb="select"] > div:hover {
+    border-color: rgba(201,162,39,0.4) !important;
+}
+[data-baseweb="select"]:focus-within > div {
+    border-color: var(--gold-mid) !important;
+    box-shadow: 0 0 0 3px rgba(201,162,39,0.07) !important;
+}
+[data-baseweb="select"] > div > div {
+    color: var(--text) !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 0.88rem !important;
+}
 [data-baseweb="tag"] {
     background-color: var(--gold-dim) !important;
     border: 1px solid var(--gold-mid) !important;
     border-radius: 2px !important;
+    font-family: 'DM Mono', monospace !important;
+    font-size: 0.74rem !important;
 }
 [data-baseweb="tag"] span,
 [data-baseweb="tag"] svg { color: var(--gold) !important; fill: var(--gold) !important; }
@@ -146,16 +161,32 @@ section[data-testid="stVerticalBlock"] > div > div { gap: 0.5rem !important; }
     border-radius: var(--r) !important;
     box-shadow: 0 16px 48px rgba(0,0,0,0.65) !important;
 }
-[role="option"] { color: var(--text) !important; }
+[role="option"] {
+    color: var(--text-2) !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 0.88rem !important;
+    padding: 8px 14px !important;
+    transition: background 0.15s !important;
+}
 [role="option"]:hover,
-[role="option"][aria-selected="true"] { background-color: var(--gold-dim) !important; }
+[role="option"][aria-selected="true"] { background-color: var(--gold-dim) !important; color: var(--text) !important; }
 [data-testid="stSelectbox"] > div > div {
     background-color: var(--elevated) !important;
-    border-color: var(--border-2) !important;
+    border: 1px solid var(--border-2) !important;
     color: var(--text) !important;
     border-radius: var(--r) !important;
+    min-height: 44px !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
 }
-[data-testid="stMultiSelect"] label {
+[data-testid="stSelectbox"] > div > div:hover {
+    border-color: rgba(201,162,39,0.4) !important;
+}
+[data-testid="stSelectbox"]:focus-within > div > div {
+    border-color: var(--gold-mid) !important;
+    box-shadow: 0 0 0 3px rgba(201,162,39,0.07) !important;
+}
+[data-testid="stMultiSelect"] label,
+[data-testid="stSelectbox"] label {
     color: var(--muted) !important;
     font-family: 'DM Mono', monospace !important;
     font-size: 0.63rem !important;
@@ -292,9 +323,23 @@ hr { border: none !important; border-top: 1px solid var(--border) !important; ma
 
 /* ─── DataFrames ─────────────────────────────── */
 [data-testid="stDataFrame"] {
-    border: 1px solid var(--border) !important;
+    border: 1px solid var(--border-2) !important;
     border-radius: var(--r) !important;
     overflow: hidden !important;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.35) !important;
+}
+[data-testid="stDataFrame"] > div {
+    border-radius: var(--r) !important;
+}
+[data-testid="stElementToolbarButton"] button {
+    background: transparent !important;
+    border-color: var(--border-2) !important;
+    color: var(--muted) !important;
+    border-radius: var(--r) !important;
+}
+[data-testid="stElementToolbarButton"] button:hover {
+    color: var(--gold) !important;
+    border-color: var(--gold-mid) !important;
 }
 
 /* ─── Alerts ─────────────────────────────────── */
@@ -306,10 +351,34 @@ hr { border: none !important; border-top: 1px solid var(--border) !important; ma
 [data-testid="stAlert"] p { color: var(--text-2) !important; }
 
 /* ─── Checkbox ───────────────────────────────── */
+[data-testid="stCheckbox"] {
+    padding: 3px 0 !important;
+}
 [data-baseweb="checkbox"] span {
     color: var(--text-2) !important;
     font-family: 'Outfit', sans-serif !important;
-    font-size: 0.88rem !important;
+    font-size: 0.875rem !important;
+    line-height: 1.4 !important;
+}
+/* Checkbox visual — unchecked */
+[data-baseweb="checkbox"] [role="checkbox"] {
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
+    border: 1.5px solid var(--border-2) !important;
+    border-radius: 3px !important;
+    background-color: var(--elevated) !important;
+    transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+[data-baseweb="checkbox"]:hover [role="checkbox"] {
+    border-color: rgba(201,162,39,0.45) !important;
+    box-shadow: 0 0 0 3px rgba(201,162,39,0.06) !important;
+}
+/* Checkbox visual — checked */
+[data-baseweb="checkbox"] [role="checkbox"][aria-checked="true"] {
+    background-color: var(--gold) !important;
+    border-color: var(--gold) !important;
+    box-shadow: 0 0 8px rgba(201,162,39,0.3) !important;
 }
 
 /* ─── Spinner ────────────────────────────────── */
@@ -922,7 +991,6 @@ def tab_comparaison(stats: list[dict], selected_players: list[str], selected_com
 
     # Bar chart groupé
     with col1:
-        st.subheader("Moyenne par compétition")
         bar_data = []
         for s in stats:
             if s["player_name"] not in players_choice:
@@ -963,7 +1031,6 @@ def tab_comparaison(stats: list[dict], selected_players: list[str], selected_com
 
     # Radar chart
     with col2:
-        st.subheader("Profil (radar)")
         radar_cats = comps_sorted + ["Régularité"]
         fig_radar = go.Figure()
 
