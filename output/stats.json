@@ -4207,307 +4207,6 @@
     ]
   },
   {
-    "player_name": "Jacobo García",
-    "moyenne_globale": 4.38,
-    "nb_matchs": 13,
-    "nb_matchs_non_notes": 17,
-    "nb_matchs_total": 30,
-    "ecart_type": 2.18,
-    "note_max": 9,
-    "note_min": 1,
-    "par_competition": {
-      "Liga": {
-        "moyenne": 4.57,
-        "nb_matchs": 7,
-        "nb_non_notes": 12,
-        "notes": [
-          7,
-          2,
-          3,
-          9,
-          1,
-          4,
-          6
-        ]
-      },
-      "Ligue des Champions": {
-        "moyenne": 4.5,
-        "nb_matchs": 2,
-        "nb_non_notes": 3,
-        "notes": [
-          3,
-          6
-        ]
-      },
-      "Coupe du Roi": {
-        "moyenne": 3.5,
-        "nb_matchs": 2,
-        "nb_non_notes": 1,
-        "notes": [
-          3,
-          4
-        ]
-      },
-      "Supercoupe d'Espagne": {
-        "moyenne": 4.5,
-        "nb_matchs": 2,
-        "nb_non_notes": 0,
-        "notes": [
-          5,
-          4
-        ]
-      },
-      "Amical": {
-        "moyenne": 0.0,
-        "nb_matchs": 0,
-        "nb_non_notes": 1,
-        "notes": []
-      }
-    },
-    "detail_matchs": [
-      {
-        "date": "2025-08-12",
-        "opponent": "WSG Tirol - Real Madrid : les notes de la rencontre !",
-        "competition": "Amical",
-        "note": null,
-        "url": "https://lejournaldureal.fr/2025/08/12/wsg-tirol-real-madrid-les-notes?categorie=actualites",
-        "title": "WSG Tirol - Real Madrid : les notes de la rencontre !"
-      },
-      {
-        "date": "2025-08-19",
-        "opponent": "Osasuna",
-        "competition": "Liga",
-        "note": null,
-        "url": "https://lejournaldureal.fr/2025/08/19/real-madrid-osasuna-notes-3?categorie=actualites",
-        "title": "Real Madrid - Osasuna (1-0) : les notes de la rencontre !"
-      },
-      {
-        "date": "2025-08-24",
-        "opponent": "Real Oviedo",
-        "competition": "Ligue des Champions",
-        "note": null,
-        "url": "https://lejournaldureal.fr/2025/08/24/real-oviedo-real-madrid-notes?categorie=actualites",
-        "title": "Real Oviedo - Real Madrid (0-3) : les notes de la rencontre !"
-      },
-      {
-        "date": "2025-08-30",
-        "opponent": "Majorque",
-        "competition": "Liga",
-        "note": null,
-        "url": "https://lejournaldureal.fr/2025/08/30/real-madrid-majorque-notes-2?categorie=actualites",
-        "title": "Real Madrid - Majorque (2-1) : les notes du match !"
-      },
-      {
-        "date": "2025-09-13",
-        "opponent": "Real Sociedad",
-        "competition": "Liga",
-        "note": null,
-        "url": "https://lejournaldureal.fr/2025/09/13/sociedad-real-madrid-notes?categorie=actualites",
-        "title": "Real Sociedad - Real Madrid (1-2) : les notes du match !"
-      },
-      {
-        "date": "2025-09-23",
-        "opponent": "Levante",
-        "competition": "Liga",
-        "note": 6,
-        "url": "https://lejournaldureal.fr/2025/09/23/levante-real-madrid-notes?categorie=actualites",
-        "title": "Levante - Real Madrid (1-4) : les notes du match !"
-      },
-      {
-        "date": "2025-09-27",
-        "opponent": "Atletico de Madrid",
-        "competition": "Liga",
-        "note": null,
-        "url": "https://lejournaldureal.fr/2025/09/27/atletico-real-madrid-notes-2?categorie=actualites",
-        "title": "Atletico de Madrid - Real Madrid (5-2) : les notes du match !"
-      },
-      {
-        "date": "2025-09-30",
-        "opponent": "Kaïrat Almaty",
-        "competition": "Ligue des Champions",
-        "note": 6,
-        "url": "https://lejournaldureal.fr/2025/09/30/almaty-real-madrid-notes?categorie=actualites",
-        "title": "Kaïrat Almaty - Real Madrid (0-5) : les notes du match !"
-      },
-      {
-        "date": "2025-10-19",
-        "opponent": "Getafe",
-        "competition": "Liga",
-        "note": null,
-        "url": "https://lejournaldureal.fr/2025/10/19/getafe-real-madrid-notes?categorie=actualites",
-        "title": "Getafe - Real Madrid (0-1) : les notes du match !"
-      },
-      {
-        "date": "2025-10-22",
-        "opponent": "Juventus",
-        "competition": "Ligue des Champions",
-        "note": null,
-        "url": "https://lejournaldureal.fr/2025/10/22/real-madrid-juventus-notes-2?categorie=actualites",
-        "title": "Real Madrid - Juventus (1-0) : les notes du match !"
-      },
-      {
-        "date": "2025-10-26",
-        "opponent": "FC Barcelone",
-        "competition": "Liga",
-        "note": null,
-        "url": "https://lejournaldureal.fr/2025/10/26/real-madrid-barca-notes?categorie=actualites",
-        "title": "Real Madrid - FC Barcelone (2-1) : les notes du Clasico !"
-      },
-      {
-        "date": "2025-11-23",
-        "opponent": "Elche",
-        "competition": "Liga",
-        "note": null,
-        "url": "https://lejournaldureal.fr/2025/11/23/elche-real-madrid-notes?categorie=actualites",
-        "title": "Elche - Real Madrid (2-2) : les notes du match !"
-      },
-      {
-        "date": "2025-11-30",
-        "opponent": "Girona",
-        "competition": "Liga",
-        "note": 4,
-        "url": "https://lejournaldureal.fr/2025/11/30/girona-real-madrid-notes-2?categorie=actualites",
-        "title": "Girona - Real Madrid (1-1) : les notes du match !"
-      },
-      {
-        "date": "2025-12-03",
-        "opponent": "Athletic Club",
-        "competition": "Liga",
-        "note": null,
-        "url": "https://lejournaldureal.fr/2025/12/03/athletic-real-madrid-notes?categorie=actualites",
-        "title": "Athletic Club - Real Madrid (0-3) : les notes du match !"
-      },
-      {
-        "date": "2025-12-07",
-        "opponent": "Celta de Vigo",
-        "competition": "Liga",
-        "note": 1,
-        "url": "https://lejournaldureal.fr/2025/12/07/real-madrid-celta-notes?categorie=actualites",
-        "title": "Real Madrid - Celta de Vigo (0-2) : les notes du match !"
-      },
-      {
-        "date": "2025-12-10",
-        "opponent": "Manchester City",
-        "competition": "Ligue des Champions",
-        "note": 3,
-        "url": "https://lejournaldureal.fr/2025/12/10/real-madrid-city-notes?categorie=actualites",
-        "title": "Real Madrid - Manchester City (1-2) : les notes du match !"
-      },
-      {
-        "date": "2025-12-14",
-        "opponent": "Alavés",
-        "competition": "Coupe du Roi",
-        "note": null,
-        "url": "https://lejournaldureal.fr/2025/12/14/alaves-real-madrid-notes-2?categorie=actualites",
-        "title": "Alavés - Real Madrid (1-2) : les notes des Madrilènes !"
-      },
-      {
-        "date": "2025-12-17",
-        "opponent": "Talavera",
-        "competition": "Coupe du Roi",
-        "note": 4,
-        "url": "https://lejournaldureal.fr/2025/12/17/talavera-real-madrid-notes?categorie=actualites",
-        "title": "Talavera - Real Madrid (2-3) : les notes du match !"
-      },
-      {
-        "date": "2025-12-20",
-        "opponent": "Séville",
-        "competition": "Liga",
-        "note": null,
-        "url": "https://lejournaldureal.fr/2025/12/20/real-madrid-seville-notes?categorie=actualites",
-        "title": "Real Madrid - Séville (2-0) : les notes des Madrilènes !"
-      },
-      {
-        "date": "2026-01-04",
-        "opponent": "Real Betis",
-        "competition": "Liga",
-        "note": 9,
-        "url": "https://lejournaldureal.fr/2026/01/04/real-madrid-betis-notes?categorie=actualites",
-        "title": "Real Madrid - Real Betis (5-1) : les notes du match !"
-      },
-      {
-        "date": "2026-01-08",
-        "opponent": "Atlético de Madrid",
-        "competition": "Supercoupe d'Espagne",
-        "note": 4,
-        "url": "https://lejournaldureal.fr/2026/01/08/atletico-real-madrid-notes-3?categorie=actualites",
-        "title": "Atlético de Madrid - Real Madrid (1-2) : les notes du match !"
-      },
-      {
-        "date": "2026-01-11",
-        "opponent": "FC Barcelone",
-        "competition": "Supercoupe d'Espagne",
-        "note": 5,
-        "url": "https://lejournaldureal.fr/2026/01/11/barca-real-madrid-notes?categorie=actualites",
-        "title": "FC Barcelone - Real Madrid (3-2) : les notes du Clasico !"
-      },
-      {
-        "date": "2026-01-14",
-        "opponent": "Albacete",
-        "competition": "Coupe du Roi",
-        "note": 3,
-        "url": "https://lejournaldureal.fr/2026/01/14/albacete-real-madrid-notes?categorie=actualites",
-        "title": "Albacete - Real Madrid (3-2) : les notes du match !"
-      },
-      {
-        "date": "2026-01-17",
-        "opponent": "Levante",
-        "competition": "Liga",
-        "note": 3,
-        "url": "https://lejournaldureal.fr/2026/01/17/real-madrid-levante-notes?categorie=actualites",
-        "title": "Real Madrid - Levante (2-0) : les notes des Madrilènes !"
-      },
-      {
-        "date": "2026-01-20",
-        "opponent": "AS Monaco",
-        "competition": "Ligue des Champions",
-        "note": null,
-        "url": "https://lejournaldureal.fr/2026/01/20/real-madrid-monaco-notes?categorie=actualites",
-        "title": "Real Madrid - AS Monaco (6-1) : les notes du match !"
-      },
-      {
-        "date": "2026-01-24",
-        "opponent": "Villarreal",
-        "competition": "Liga",
-        "note": null,
-        "url": "https://lejournaldureal.fr/2026/01/24/villarreal-real-madrid-notes?categorie=actualites",
-        "title": "Villarreal - Real Madrid (0-2) : les notes des Madrilènes !"
-      },
-      {
-        "date": "2026-02-01",
-        "opponent": "Rayo Vallecano",
-        "competition": "Liga",
-        "note": null,
-        "url": "https://lejournaldureal.fr/2026/02/01/real-madrid-rayo-notes?categorie=actualites",
-        "title": "Real Madrid - Rayo Vallecano (2-1) : les notes du match !"
-      },
-      {
-        "date": "2026-02-08",
-        "opponent": "Valence",
-        "competition": "Liga",
-        "note": 2,
-        "url": "https://lejournaldureal.fr/2026/02/08/valence-real-madrid-notes-2?categorie=actualites",
-        "title": "Valence - Real Madrid (0-2) : les notes du match !"
-      },
-      {
-        "date": "2026-02-14",
-        "opponent": "Real Sociedad",
-        "competition": "Liga",
-        "note": 7,
-        "url": "https://lejournaldureal.fr/2026/02/14/real-madrid-sociedad-notes-2?categorie=actualites",
-        "title": "Real Madrid - Real Sociedad (4-1) : les notes du match !"
-      },
-      {
-        "date": "2026-02-21",
-        "opponent": "Osasuna",
-        "competition": "Liga",
-        "note": null,
-        "url": "https://lejournaldureal.fr/2026/02/21/osasuna-real-madrid-notes?categorie=actualites",
-        "title": "Osasuna - Real Madrid (2-1) : les notes de la rencontre !"
-      }
-    ]
-  },
-  {
     "player_name": "Dani Ceballos",
     "moyenne_globale": 4.38,
     "nb_matchs": 8,
@@ -4874,6 +4573,431 @@
     ]
   },
   {
+    "player_name": "Gonzalo García",
+    "moyenne_globale": 4.3,
+    "nb_matchs": 10,
+    "nb_matchs_non_notes": 18,
+    "nb_matchs_total": 28,
+    "ecart_type": 2.16,
+    "note_max": 9,
+    "note_min": 2,
+    "par_competition": {
+      "Liga": {
+        "moyenne": 5,
+        "nb_matchs": 5,
+        "nb_non_notes": 13,
+        "notes": [
+          7,
+          2,
+          3,
+          9,
+          4
+        ]
+      },
+      "Ligue des Champions": {
+        "moyenne": 3,
+        "nb_matchs": 1,
+        "nb_non_notes": 4,
+        "notes": [
+          3
+        ]
+      },
+      "Coupe du Roi": {
+        "moyenne": 3,
+        "nb_matchs": 2,
+        "nb_non_notes": 1,
+        "notes": [
+          3,
+          3
+        ]
+      },
+      "Supercoupe d'Espagne": {
+        "moyenne": 4.5,
+        "nb_matchs": 2,
+        "nb_non_notes": 0,
+        "notes": [
+          5,
+          4
+        ]
+      }
+    },
+    "detail_matchs": [
+      {
+        "date": "2025-08-19",
+        "opponent": "Osasuna",
+        "competition": "Liga",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2025/08/19/real-madrid-osasuna-notes-3?categorie=actualites",
+        "title": "Real Madrid - Osasuna (1-0) : les notes de la rencontre !"
+      },
+      {
+        "date": "2025-08-24",
+        "opponent": "Real Oviedo",
+        "competition": "Ligue des Champions",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2025/08/24/real-oviedo-real-madrid-notes?categorie=actualites",
+        "title": "Real Oviedo - Real Madrid (0-3) : les notes de la rencontre !"
+      },
+      {
+        "date": "2025-08-30",
+        "opponent": "Majorque",
+        "competition": "Liga",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2025/08/30/real-madrid-majorque-notes-2?categorie=actualites",
+        "title": "Real Madrid - Majorque (2-1) : les notes du match !"
+      },
+      {
+        "date": "2025-09-20",
+        "opponent": "Espanyol",
+        "competition": "Liga",
+        "note": 4,
+        "url": "https://lejournaldureal.fr/2025/09/20/real-madrid-espanyol-notes-2?categorie=actualites",
+        "title": "Real Madrid - Espanyol (2-0) : les notes de la rencontre !"
+      },
+      {
+        "date": "2025-09-27",
+        "opponent": "Atletico de Madrid",
+        "competition": "Liga",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2025/09/27/atletico-real-madrid-notes-2?categorie=actualites",
+        "title": "Atletico de Madrid - Real Madrid (5-2) : les notes du match !"
+      },
+      {
+        "date": "2025-09-30",
+        "opponent": "Kaïrat Almaty",
+        "competition": "Ligue des Champions",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2025/09/30/almaty-real-madrid-notes?categorie=actualites",
+        "title": "Kaïrat Almaty - Real Madrid (0-5) : les notes du match !"
+      },
+      {
+        "date": "2025-10-19",
+        "opponent": "Getafe",
+        "competition": "Liga",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2025/10/19/getafe-real-madrid-notes?categorie=actualites",
+        "title": "Getafe - Real Madrid (0-1) : les notes du match !"
+      },
+      {
+        "date": "2025-10-22",
+        "opponent": "Juventus",
+        "competition": "Ligue des Champions",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2025/10/22/real-madrid-juventus-notes-2?categorie=actualites",
+        "title": "Real Madrid - Juventus (1-0) : les notes du match !"
+      },
+      {
+        "date": "2025-10-26",
+        "opponent": "FC Barcelone",
+        "competition": "Liga",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2025/10/26/real-madrid-barca-notes?categorie=actualites",
+        "title": "Real Madrid - FC Barcelone (2-1) : les notes du Clasico !"
+      },
+      {
+        "date": "2025-11-23",
+        "opponent": "Elche",
+        "competition": "Liga",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2025/11/23/elche-real-madrid-notes?categorie=actualites",
+        "title": "Elche - Real Madrid (2-2) : les notes du match !"
+      },
+      {
+        "date": "2025-11-30",
+        "opponent": "Girona",
+        "competition": "Liga",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2025/11/30/girona-real-madrid-notes-2?categorie=actualites",
+        "title": "Girona - Real Madrid (1-1) : les notes du match !"
+      },
+      {
+        "date": "2025-12-03",
+        "opponent": "Athletic Club",
+        "competition": "Liga",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2025/12/03/athletic-real-madrid-notes?categorie=actualites",
+        "title": "Athletic Club - Real Madrid (0-3) : les notes du match !"
+      },
+      {
+        "date": "2025-12-07",
+        "opponent": "Celta de Vigo",
+        "competition": "Liga",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2025/12/07/real-madrid-celta-notes?categorie=actualites",
+        "title": "Real Madrid - Celta de Vigo (0-2) : les notes du match !"
+      },
+      {
+        "date": "2025-12-10",
+        "opponent": "Manchester City",
+        "competition": "Ligue des Champions",
+        "note": 3,
+        "url": "https://lejournaldureal.fr/2025/12/10/real-madrid-city-notes?categorie=actualites",
+        "title": "Real Madrid - Manchester City (1-2) : les notes du match !"
+      },
+      {
+        "date": "2025-12-14",
+        "opponent": "Alavés",
+        "competition": "Coupe du Roi",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2025/12/14/alaves-real-madrid-notes-2?categorie=actualites",
+        "title": "Alavés - Real Madrid (1-2) : les notes des Madrilènes !"
+      },
+      {
+        "date": "2025-12-17",
+        "opponent": "Talavera",
+        "competition": "Coupe du Roi",
+        "note": 3,
+        "url": "https://lejournaldureal.fr/2025/12/17/talavera-real-madrid-notes?categorie=actualites",
+        "title": "Talavera - Real Madrid (2-3) : les notes du match !"
+      },
+      {
+        "date": "2025-12-20",
+        "opponent": "Séville",
+        "competition": "Liga",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2025/12/20/real-madrid-seville-notes?categorie=actualites",
+        "title": "Real Madrid - Séville (2-0) : les notes des Madrilènes !"
+      },
+      {
+        "date": "2026-01-04",
+        "opponent": "Real Betis",
+        "competition": "Liga",
+        "note": 9,
+        "url": "https://lejournaldureal.fr/2026/01/04/real-madrid-betis-notes?categorie=actualites",
+        "title": "Real Madrid - Real Betis (5-1) : les notes du match !"
+      },
+      {
+        "date": "2026-01-08",
+        "opponent": "Atlético de Madrid",
+        "competition": "Supercoupe d'Espagne",
+        "note": 4,
+        "url": "https://lejournaldureal.fr/2026/01/08/atletico-real-madrid-notes-3?categorie=actualites",
+        "title": "Atlético de Madrid - Real Madrid (1-2) : les notes du match !"
+      },
+      {
+        "date": "2026-01-11",
+        "opponent": "FC Barcelone",
+        "competition": "Supercoupe d'Espagne",
+        "note": 5,
+        "url": "https://lejournaldureal.fr/2026/01/11/barca-real-madrid-notes?categorie=actualites",
+        "title": "FC Barcelone - Real Madrid (3-2) : les notes du Clasico !"
+      },
+      {
+        "date": "2026-01-14",
+        "opponent": "Albacete",
+        "competition": "Coupe du Roi",
+        "note": 3,
+        "url": "https://lejournaldureal.fr/2026/01/14/albacete-real-madrid-notes?categorie=actualites",
+        "title": "Albacete - Real Madrid (3-2) : les notes du match !"
+      },
+      {
+        "date": "2026-01-17",
+        "opponent": "Levante",
+        "competition": "Liga",
+        "note": 3,
+        "url": "https://lejournaldureal.fr/2026/01/17/real-madrid-levante-notes?categorie=actualites",
+        "title": "Real Madrid - Levante (2-0) : les notes des Madrilènes !"
+      },
+      {
+        "date": "2026-01-20",
+        "opponent": "AS Monaco",
+        "competition": "Ligue des Champions",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2026/01/20/real-madrid-monaco-notes?categorie=actualites",
+        "title": "Real Madrid - AS Monaco (6-1) : les notes du match !"
+      },
+      {
+        "date": "2026-01-24",
+        "opponent": "Villarreal",
+        "competition": "Liga",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2026/01/24/villarreal-real-madrid-notes?categorie=actualites",
+        "title": "Villarreal - Real Madrid (0-2) : les notes des Madrilènes !"
+      },
+      {
+        "date": "2026-02-01",
+        "opponent": "Rayo Vallecano",
+        "competition": "Liga",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2026/02/01/real-madrid-rayo-notes?categorie=actualites",
+        "title": "Real Madrid - Rayo Vallecano (2-1) : les notes du match !"
+      },
+      {
+        "date": "2026-02-08",
+        "opponent": "Valence",
+        "competition": "Liga",
+        "note": 2,
+        "url": "https://lejournaldureal.fr/2026/02/08/valence-real-madrid-notes-2?categorie=actualites",
+        "title": "Valence - Real Madrid (0-2) : les notes du match !"
+      },
+      {
+        "date": "2026-02-14",
+        "opponent": "Real Sociedad",
+        "competition": "Liga",
+        "note": 7,
+        "url": "https://lejournaldureal.fr/2026/02/14/real-madrid-sociedad-notes-2?categorie=actualites",
+        "title": "Real Madrid - Real Sociedad (4-1) : les notes du match !"
+      },
+      {
+        "date": "2026-02-21",
+        "opponent": "Osasuna",
+        "competition": "Liga",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2026/02/21/osasuna-real-madrid-notes?categorie=actualites",
+        "title": "Osasuna - Real Madrid (2-1) : les notes de la rencontre !"
+      }
+    ]
+  },
+  {
+    "player_name": "Fran García",
+    "moyenne_globale": 4,
+    "nb_matchs": 6,
+    "nb_matchs_non_notes": 6,
+    "nb_matchs_total": 12,
+    "ecart_type": 1.9,
+    "note_max": 6,
+    "note_min": 1,
+    "par_competition": {
+      "Ligue des Champions": {
+        "moyenne": 6,
+        "nb_matchs": 1,
+        "nb_non_notes": 2,
+        "notes": [
+          6
+        ]
+      },
+      "Coupe du Roi": {
+        "moyenne": 3.5,
+        "nb_matchs": 2,
+        "nb_non_notes": 0,
+        "notes": [
+          3,
+          4
+        ]
+      },
+      "Supercoupe d'Espagne": {
+        "moyenne": 0.0,
+        "nb_matchs": 0,
+        "nb_non_notes": 1,
+        "notes": []
+      },
+      "Liga": {
+        "moyenne": 3.67,
+        "nb_matchs": 3,
+        "nb_non_notes": 2,
+        "notes": [
+          1,
+          4,
+          6
+        ]
+      },
+      "Amical": {
+        "moyenne": 0.0,
+        "nb_matchs": 0,
+        "nb_non_notes": 1,
+        "notes": []
+      }
+    },
+    "detail_matchs": [
+      {
+        "date": "2025-08-12",
+        "opponent": "WSG Tirol - Real Madrid : les notes de la rencontre !",
+        "competition": "Amical",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2025/08/12/wsg-tirol-real-madrid-les-notes?categorie=actualites",
+        "title": "WSG Tirol - Real Madrid : les notes de la rencontre !"
+      },
+      {
+        "date": "2025-09-13",
+        "opponent": "Real Sociedad",
+        "competition": "Liga",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2025/09/13/sociedad-real-madrid-notes?categorie=actualites",
+        "title": "Real Sociedad - Real Madrid (1-2) : les notes du match !"
+      },
+      {
+        "date": "2025-09-23",
+        "opponent": "Levante",
+        "competition": "Liga",
+        "note": 6,
+        "url": "https://lejournaldureal.fr/2025/09/23/levante-real-madrid-notes?categorie=actualites",
+        "title": "Levante - Real Madrid (1-4) : les notes du match !"
+      },
+      {
+        "date": "2025-09-30",
+        "opponent": "Kaïrat Almaty",
+        "competition": "Ligue des Champions",
+        "note": 6,
+        "url": "https://lejournaldureal.fr/2025/09/30/almaty-real-madrid-notes?categorie=actualites",
+        "title": "Kaïrat Almaty - Real Madrid (0-5) : les notes du match !"
+      },
+      {
+        "date": "2025-10-22",
+        "opponent": "Juventus",
+        "competition": "Ligue des Champions",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2025/10/22/real-madrid-juventus-notes-2?categorie=actualites",
+        "title": "Real Madrid - Juventus (1-0) : les notes du match !"
+      },
+      {
+        "date": "2025-11-30",
+        "opponent": "Girona",
+        "competition": "Liga",
+        "note": 4,
+        "url": "https://lejournaldureal.fr/2025/11/30/girona-real-madrid-notes-2?categorie=actualites",
+        "title": "Girona - Real Madrid (1-1) : les notes du match !"
+      },
+      {
+        "date": "2025-12-07",
+        "opponent": "Celta de Vigo",
+        "competition": "Liga",
+        "note": 1,
+        "url": "https://lejournaldureal.fr/2025/12/07/real-madrid-celta-notes?categorie=actualites",
+        "title": "Real Madrid - Celta de Vigo (0-2) : les notes du match !"
+      },
+      {
+        "date": "2025-12-17",
+        "opponent": "Talavera",
+        "competition": "Coupe du Roi",
+        "note": 4,
+        "url": "https://lejournaldureal.fr/2025/12/17/talavera-real-madrid-notes?categorie=actualites",
+        "title": "Talavera - Real Madrid (2-3) : les notes du match !"
+      },
+      {
+        "date": "2026-01-04",
+        "opponent": "Real Betis",
+        "competition": "Liga",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2026/01/04/real-madrid-betis-notes?categorie=actualites",
+        "title": "Real Madrid - Real Betis (5-1) : les notes du match !"
+      },
+      {
+        "date": "2026-01-08",
+        "opponent": "Atlético de Madrid",
+        "competition": "Supercoupe d'Espagne",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2026/01/08/atletico-real-madrid-notes-3?categorie=actualites",
+        "title": "Atlético de Madrid - Real Madrid (1-2) : les notes du match !"
+      },
+      {
+        "date": "2026-01-14",
+        "opponent": "Albacete",
+        "competition": "Coupe du Roi",
+        "note": 3,
+        "url": "https://lejournaldureal.fr/2026/01/14/albacete-real-madrid-notes?categorie=actualites",
+        "title": "Albacete - Real Madrid (3-2) : les notes du match !"
+      },
+      {
+        "date": "2026-01-20",
+        "opponent": "AS Monaco",
+        "competition": "Ligue des Champions",
+        "note": null,
+        "url": "https://lejournaldureal.fr/2026/01/20/real-madrid-monaco-notes?categorie=actualites",
+        "title": "Real Madrid - AS Monaco (6-1) : les notes du match !"
+      }
+    ]
+  },
+  {
     "player_name": "Rodrygo",
     "moyenne_globale": 4,
     "nb_matchs": 3,
@@ -5043,36 +5167,6 @@
         "note": null,
         "url": "https://lejournaldureal.fr/2026/02/01/real-madrid-rayo-notes?categorie=actualites",
         "title": "Real Madrid - Rayo Vallecano (2-1) : les notes du match !"
-      }
-    ]
-  },
-  {
-    "player_name": "Gonzalo",
-    "moyenne_globale": 4,
-    "nb_matchs": 1,
-    "nb_matchs_non_notes": 0,
-    "nb_matchs_total": 1,
-    "ecart_type": 0.0,
-    "note_max": 4,
-    "note_min": 4,
-    "par_competition": {
-      "Liga": {
-        "moyenne": 4,
-        "nb_matchs": 1,
-        "nb_non_notes": 0,
-        "notes": [
-          4
-        ]
-      }
-    },
-    "detail_matchs": [
-      {
-        "date": "2025-09-20",
-        "opponent": "Espanyol",
-        "competition": "Liga",
-        "note": 4,
-        "url": "https://lejournaldureal.fr/2025/09/20/real-madrid-espanyol-notes-2?categorie=actualites",
-        "title": "Real Madrid - Espanyol (2-0) : les notes de la rencontre !"
       }
     ]
   },

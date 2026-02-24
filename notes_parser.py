@@ -33,8 +33,9 @@ NAME_ALIASES: dict[str, str] = {
     "Huijsen": "Dean Huijsen",
     "Carreras": "Alvaro Carreras",
     "Mendy": "Ferland Mendy",
-    "Garcia": "Jacobo García",
-    "Jacobo Garcia": "Jacobo García",
+    "Gonzalo Garcia": "Gonzalo García",
+    "Gonzalo": "Gonzalo García",
+    "Fran Garcia": "Fran García",
     # Milieux
     "Valverde": "Federico Valverde",
     "Tchouameni": "Aurélien Tchouaméni",
