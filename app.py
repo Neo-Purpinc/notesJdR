@@ -4,6 +4,7 @@ app.py — Interface web Streamlit pour visualiser les notes Real Madrid.
 Lancer avec : streamlit run app.py
 """
 
+import base64
 import json
 from pathlib import Path
 
@@ -38,6 +39,15 @@ COLOR_SCALE = {
     "mid":  "#f59e0b",
     "low":  "#ef4444",
 }
+
+@st.cache_resource
+def _load_logo_b64() -> str:
+    """Charge le logo JDR en base64 (mis en cache pour la session)."""
+    path = Path("logo-jdr.jpg")
+    if path.exists():
+        return base64.b64encode(path.read_bytes()).decode()
+    return ""
+
 
 # Palette Real Madrid — or en tête, puis couleurs distinctives
 MADRID_PALETTE = [
@@ -569,24 +579,14 @@ hr { border: none !important; border-top: 1px solid var(--border) !important; ma
     padding: 1.3rem 0 0.8rem;
     text-align: center;
 }
-.sidebar-crest-wrap {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    height: 48px;
+.sidebar-logo {
+    display: block;
+    width: 72px;
+    height: 72px;
     margin: 0 auto 0.7rem;
-    border: 1px solid var(--gold-mid);
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,162,39,0.12), rgba(201,162,39,0.03));
-    box-shadow: 0 0 18px rgba(201,162,39,0.1), inset 0 0 8px rgba(201,162,39,0.05);
-}
-.sidebar-crest-rm {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.05rem;
-    letter-spacing: 0.08em;
-    color: var(--gold);
-    line-height: 1;
+    object-fit: cover;
+    box-shadow: 0 0 22px rgba(201,162,39,0.2), 0 0 0 1px rgba(201,162,39,0.15);
 }
 .sidebar-club {
     display: block;
@@ -775,11 +775,16 @@ def color_note(val) -> str:
 # ---------------------------------------------------------------------------
 
 def render_sidebar(df: pd.DataFrame) -> tuple[list[str], list[str]]:
-    st.sidebar.markdown("""
+    logo_b64 = _load_logo_b64()
+    logo_html = (
+        f'<img src="data:image/jpeg;base64,{logo_b64}" class="sidebar-logo" alt="JDR">'
+        if logo_b64
+        else '<div style="width:72px;height:72px;margin:0 auto 0.7rem;border-radius:50%;'
+             'border:1px solid rgba(201,162,39,0.25);background:rgba(201,162,39,0.06)"></div>'
+    )
+    st.sidebar.markdown(f"""
 <div class="sidebar-head">
-    <div class="sidebar-crest-wrap">
-        <span class="sidebar-crest-rm">RM</span>
-    </div>
+    {logo_html}
     <span class="sidebar-club">REAL MADRID</span>
     <span class="sidebar-season">Saison 2025 — 2026</span>
 </div>
@@ -1019,12 +1024,13 @@ def tab_comparaison(stats: list[dict], selected_players: list[str], selected_com
                 height=420,
             )
             fig_bar.update_layout(
-                legend=dict(orientation="h", yanchor="bottom", y=1.02),
+                legend=dict(orientation="h", yanchor="top", y=-0.22, xanchor="center", x=0.5),
                 bargap=0.2,
                 bargroupgap=0.05,
                 hoverlabel=dict(bgcolor="#0c1624", bordercolor="#1e3050", font_family="DM Mono, monospace"),
             )
             apply_chart_theme(fig_bar, "Moyennes par compétition")
+            fig_bar.update_layout(margin=dict(b=72))
             st.plotly_chart(fig_bar, use_container_width=True)
         else:
             st.info("Pas de données pour le graphique en barres.")
@@ -1077,10 +1083,12 @@ def tab_comparaison(stats: list[dict], selected_players: list[str], selected_com
                 ),
             ),
             showlegend=True,
-            height=420,
+            legend=dict(orientation="h", yanchor="top", y=-0.08, xanchor="center", x=0.5),
+            height=440,
             hoverlabel=dict(bgcolor="#0c1624", bordercolor="#1e3050", font_family="DM Mono, monospace"),
         )
         apply_chart_theme(fig_radar, "Profil multi-compétition")
+        fig_radar.update_layout(margin=dict(b=72))
         st.plotly_chart(fig_radar, use_container_width=True)
 
 
