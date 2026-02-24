@@ -41,115 +41,162 @@ COLOR_SCALE = {
 
 # Palette Real Madrid — or en tête, puis couleurs distinctives
 MADRID_PALETTE = [
-    "#c5a028", "#3b82f6", "#ef4444", "#22c55e",
+    "#c9a227", "#3b82f6", "#ef4444", "#22c55e",
     "#8b5cf6", "#f97316", "#06b6d4", "#ec4899",
 ]
 
 
 # ---------------------------------------------------------------------------
-# CSS — Thème Estadio Oscuro
+# CSS — Thème Bernabéu Noir
 # ---------------------------------------------------------------------------
 
 def inject_css() -> None:
     st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Lato:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Outfit:wght@300;400;500;600&display=swap');
 
+/* ─── Variables ─────────────────────────────── */
 :root {
-    --bg:       #070b13;
-    --card:     #0d1422;
-    --elevated: #141c2f;
-    --gold:     #c5a028;
-    --gold-dim: rgba(197,160,40,0.1);
-    --gold-mid: rgba(197,160,40,0.35);
-    --text:     #ddd9cc;
-    --muted:    #536070;
-    --border:   #18263a;
-    --green:    #22c55e;
-    --amber:    #f59e0b;
-    --red:      #ef4444;
+    --bg:          #04080f;
+    --surface:     #07101c;
+    --card:        #0c1624;
+    --elevated:    #111e30;
+    --gold:        #c9a227;
+    --gold-bright: #dbb84a;
+    --gold-dim:    rgba(201,162,39,0.08);
+    --gold-mid:    rgba(201,162,39,0.25);
+    --gold-glow:   rgba(201,162,39,0.13);
+    --royal:       #1c3a6e;
+    --text:        #e6e0d0;
+    --text-2:      #8fa0b2;
+    --muted:       #445566;
+    --border:      #152338;
+    --border-2:    #1e3050;
+    --green:       #22c55e;
+    --amber:       #f59e0b;
+    --red:         #ef4444;
+    --r:           3px;
 }
 
-/* ── Base ── */
+/* ─── Reset ─────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+::selection { background: rgba(201,162,39,0.2); color: var(--text); }
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(201,162,39,0.35); }
+
+/* ─── App Layout ─────────────────────────────── */
 body,
 .stApp,
 .stAppViewContainer,
 [data-testid="stAppViewContainer"] {
     background-color: var(--bg) !important;
-    font-family: 'Lato', sans-serif !important;
+    background-image:
+        radial-gradient(ellipse 100% 40% at 50% 0%, rgba(28,58,110,0.28) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 30% at 0% 100%, rgba(10,20,40,0.4) 0%, transparent 60%) !important;
+    font-family: 'Outfit', sans-serif !important;
     color: var(--text) !important;
 }
 .stApp > header { display: none !important; }
-#MainMenu, footer { visibility: hidden !important; }
-.block-container { padding-top: 0.75rem !important; max-width: 100% !important; }
+#MainMenu, footer, [data-testid="stToolbar"] { visibility: hidden !important; }
+.block-container {
+    padding-top: 0.5rem !important;
+    padding-left: 2.5rem !important;
+    padding-right: 2.5rem !important;
+    max-width: 100% !important;
+}
 section[data-testid="stVerticalBlock"] > div > div { gap: 0.5rem !important; }
 
-/* ── Sidebar ── */
+/* ─── Sidebar ─────────────────────────────────── */
 [data-testid="stSidebar"],
-[data-testid="stSidebar"] > div { background-color: var(--card) !important; }
-[data-testid="stSidebar"] { border-right: 1px solid var(--border) !important; }
+[data-testid="stSidebar"] > div {
+    background: linear-gradient(180deg, #060f1c 0%, #04090f 100%) !important;
+}
+[data-testid="stSidebar"] {
+    border-right: 1px solid var(--border) !important;
+    box-shadow: 6px 0 32px rgba(0,0,0,0.55) !important;
+}
 [data-testid="stSidebar"] p,
 [data-testid="stSidebar"] label,
-[data-testid="stSidebar"] span { color: var(--text) !important; }
+[data-testid="stSidebar"] span {
+    color: var(--text-2) !important;
+    font-family: 'Outfit', sans-serif !important;
+}
 
-/* ── Multiselect / Select ── */
+/* ─── Select & Multiselect ───────────────────── */
 [data-baseweb="select"] > div {
     background-color: var(--elevated) !important;
-    border-color: var(--border) !important;
+    border-color: var(--border-2) !important;
+    border-radius: var(--r) !important;
 }
 [data-baseweb="select"] > div > div { color: var(--text) !important; }
 [data-baseweb="tag"] {
     background-color: var(--gold-dim) !important;
     border: 1px solid var(--gold-mid) !important;
+    border-radius: 2px !important;
 }
 [data-baseweb="tag"] span,
 [data-baseweb="tag"] svg { color: var(--gold) !important; fill: var(--gold) !important; }
 [data-baseweb="popover"] > div,
 [data-baseweb="menu"] {
     background-color: var(--elevated) !important;
-    border: 1px solid var(--border) !important;
+    border: 1px solid var(--border-2) !important;
+    border-radius: var(--r) !important;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.65) !important;
 }
 [role="option"] { color: var(--text) !important; }
 [role="option"]:hover,
 [role="option"][aria-selected="true"] { background-color: var(--gold-dim) !important; }
 [data-testid="stSelectbox"] > div > div {
     background-color: var(--elevated) !important;
-    border-color: var(--border) !important;
+    border-color: var(--border-2) !important;
     color: var(--text) !important;
+    border-radius: var(--r) !important;
+}
+[data-testid="stMultiSelect"] label {
+    color: var(--muted) !important;
+    font-family: 'DM Mono', monospace !important;
+    font-size: 0.63rem !important;
+    letter-spacing: 0.2em !important;
+    text-transform: uppercase !important;
 }
 
-/* ── Buttons ── */
+/* ─── Buttons ─────────────────────────────────── */
 .stButton > button {
     background: var(--gold-dim) !important;
     color: var(--gold) !important;
     border: 1px solid var(--gold-mid) !important;
     font-family: 'Bebas Neue', sans-serif !important;
-    letter-spacing: 0.12em !important;
+    letter-spacing: 0.15em !important;
     font-size: 1rem !important;
-    border-radius: 2px !important;
-    transition: background 0.15s, color 0.15s !important;
+    border-radius: var(--r) !important;
+    padding: 0.4rem 1.2rem !important;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s !important;
 }
 .stButton > button:hover {
     background: var(--gold) !important;
     color: var(--bg) !important;
     border-color: var(--gold) !important;
+    box-shadow: 0 4px 20px rgba(201,162,39,0.28) !important;
 }
 [data-testid="stDownloadButton"] button {
     background: transparent !important;
     color: var(--muted) !important;
-    border: 1px solid var(--border) !important;
+    border: 1px solid var(--border-2) !important;
     font-family: 'DM Mono', monospace !important;
-    font-size: 0.72rem !important;
+    font-size: 0.68rem !important;
     letter-spacing: 0.12em !important;
     text-transform: uppercase !important;
-    border-radius: 2px !important;
+    border-radius: var(--r) !important;
 }
 [data-testid="stDownloadButton"] button:hover {
     color: var(--gold) !important;
     border-color: var(--gold-mid) !important;
 }
 
-/* ── Tabs ── */
+/* ─── Tabs ────────────────────────────────────── */
 .stTabs [data-baseweb="tab-list"] {
     background: transparent !important;
     border-bottom: 1px solid var(--border) !important;
@@ -160,60 +207,78 @@ section[data-testid="stVerticalBlock"] > div > div { gap: 0.5rem !important; }
     background: transparent !important;
     color: var(--muted) !important;
     font-family: 'Bebas Neue', sans-serif !important;
-    font-size: 1.05rem !important;
-    letter-spacing: 0.12em !important;
-    padding: 0.55rem 1.4rem !important;
+    font-size: 1.08rem !important;
+    letter-spacing: 0.14em !important;
+    padding: 0.65rem 1.65rem !important;
     border: none !important;
     border-bottom: 2px solid transparent !important;
     margin-bottom: -1px !important;
-    transition: color 0.15s, border-color 0.15s !important;
+    transition: color 0.2s ease, background 0.2s ease !important;
 }
-.stTabs [data-baseweb="tab-list"] button:hover { color: var(--text) !important; }
+.stTabs [data-baseweb="tab-list"] button:hover {
+    color: var(--text-2) !important;
+    background: rgba(201,162,39,0.04) !important;
+}
 .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
     color: var(--gold) !important;
     border-bottom-color: var(--gold) !important;
+    background: linear-gradient(180deg, rgba(201,162,39,0.06) 0%, transparent 100%) !important;
 }
 .stTabs [data-baseweb="tab-highlight"] { display: none !important; }
-.stTabs [data-baseweb="tab-panel"] { padding-top: 1.25rem !important; }
+.stTabs [data-baseweb="tab-panel"] { padding-top: 1.5rem !important; }
 
-/* ── Typography ── */
+/* ─── Typography ─────────────────────────────── */
 h1, h2, h3 {
     font-family: 'Bebas Neue', sans-serif !important;
-    letter-spacing: 0.07em !important;
+    letter-spacing: 0.08em !important;
     color: var(--text) !important;
 }
-h2 { font-size: 1.7rem !important; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; margin-bottom: 1rem !important; }
-h3 { font-size: 1.2rem !important; color: var(--muted) !important; }
-p { color: var(--text) !important; }
-hr { border: none !important; border-top: 1px solid var(--border) !important; margin: 1rem 0 !important; }
+h2 {
+    font-size: 1.6rem !important;
+    border-bottom: 1px solid var(--border) !important;
+    padding-bottom: 0.5rem !important;
+    margin-bottom: 1.2rem !important;
+    padding-left: 0.75rem !important;
+    border-left: 3px solid var(--gold) !important;
+    border-right: none !important;
+    border-top: none !important;
+}
+h3 { font-size: 1.1rem !important; color: var(--muted) !important; }
+p { color: var(--text-2) !important; font-family: 'Outfit', sans-serif !important; }
+hr { border: none !important; border-top: 1px solid var(--border) !important; margin: 1.5rem 0 !important; }
 .stCaptionContainer p {
     color: var(--muted) !important;
     font-family: 'DM Mono', monospace !important;
-    font-size: 0.7rem !important;
-    letter-spacing: 0.08em !important;
+    font-size: 0.67rem !important;
+    letter-spacing: 0.1em !important;
 }
 
-/* ── Slider ── */
+/* ─── Slider ─────────────────────────────────── */
 [data-testid="stSlider"] [role="slider"] {
     background-color: var(--gold) !important;
     border-color: var(--gold) !important;
+    box-shadow: 0 0 10px rgba(201,162,39,0.45) !important;
 }
-[data-testid="stSlider"] [data-testid="stSliderTickBar"] { color: var(--muted) !important; }
-[data-testid="stSlider"] p { color: var(--text) !important; font-family: 'DM Mono', monospace !important; font-size: 0.8rem !important; }
+[data-testid="stSlider"] p {
+    color: var(--text-2) !important;
+    font-family: 'DM Mono', monospace !important;
+    font-size: 0.8rem !important;
+}
 
-/* ── Metrics ── */
+/* ─── Native Metrics (fallback) ──────────────── */
 [data-testid="stMetric"] {
     background: linear-gradient(145deg, var(--card), var(--elevated)) !important;
     border: 1px solid var(--border) !important;
     border-top: 2px solid var(--gold) !important;
-    padding: 1rem 1.25rem !important;
-    border-radius: 2px !important;
+    padding: 1.2rem 1.4rem !important;
+    border-radius: var(--r) !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
 }
 [data-testid="stMetricLabel"] p {
     color: var(--muted) !important;
     font-family: 'DM Mono', monospace !important;
-    font-size: 0.62rem !important;
-    letter-spacing: 0.18em !important;
+    font-size: 0.6rem !important;
+    letter-spacing: 0.2em !important;
     text-transform: uppercase !important;
 }
 [data-testid="stMetricValue"],
@@ -221,146 +286,294 @@ hr { border: none !important; border-top: 1px solid var(--border) !important; ma
 [data-testid="stMetricValue"] > div > div {
     color: var(--gold) !important;
     font-family: 'Bebas Neue', sans-serif !important;
-    font-size: 2rem !important;
+    font-size: 2.2rem !important;
     letter-spacing: 0.03em !important;
 }
 
-/* ── DataFrames ── */
+/* ─── DataFrames ─────────────────────────────── */
 [data-testid="stDataFrame"] {
     border: 1px solid var(--border) !important;
-    border-radius: 2px !important;
+    border-radius: var(--r) !important;
     overflow: hidden !important;
 }
 
-/* ── Alerts ── */
+/* ─── Alerts ─────────────────────────────────── */
 [data-testid="stAlert"] {
-    background-color: var(--elevated) !important;
+    background-color: var(--card) !important;
     border-left-color: var(--gold) !important;
-    border-radius: 2px !important;
+    border-radius: var(--r) !important;
 }
-[data-testid="stAlert"] p { color: var(--text) !important; }
+[data-testid="stAlert"] p { color: var(--text-2) !important; }
 
-/* ── Checkbox ── */
-[data-baseweb="checkbox"] span { color: var(--text) !important; }
+/* ─── Checkbox ───────────────────────────────── */
+[data-baseweb="checkbox"] span {
+    color: var(--text-2) !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 0.88rem !important;
+}
 
-/* ── Spinner ── */
+/* ─── Spinner ────────────────────────────────── */
 .stSpinner > div > div { border-top-color: var(--gold) !important; }
-.stSpinner p { color: var(--muted) !important; font-family: 'DM Mono', monospace !important; font-size: 0.75rem !important; }
+.stSpinner p {
+    color: var(--muted) !important;
+    font-family: 'DM Mono', monospace !important;
+    font-size: 0.75rem !important;
+}
+[data-testid="stSidebar"] [data-testid="stAlert"] { border-radius: var(--r) !important; }
 
-/* ── Success / Error in sidebar ── */
-[data-testid="stSidebar"] [data-testid="stAlert"] { border-radius: 2px !important; }
+/* ══════════════════════════════════════════════
+   HERO
+══════════════════════════════════════════════ */
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
 
-/* ══════════════════════════════════════════
-   Hero
-══════════════════════════════════════════ */
-.hero-wrap { padding: 1rem 0 0; }
+.hero-wrap {
+    position: relative;
+    padding: 1.8rem 0 0;
+    overflow: hidden;
+}
+.hero-bg-mark {
+    position: absolute;
+    top: -1rem;
+    right: -0.5rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 15vw, 13rem);
+    color: rgba(201,162,39,0.027);
+    letter-spacing: 0.06em;
+    line-height: 1;
+    user-select: none;
+    pointer-events: none;
+    white-space: nowrap;
+}
 .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
     font-family: 'DM Mono', monospace;
-    font-size: 0.68rem;
-    letter-spacing: 0.32em;
+    font-size: 0.62rem;
+    letter-spacing: 0.38em;
     color: var(--gold);
     text-transform: uppercase;
-    display: block;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.55rem;
+    animation: fadeUp 0.55s ease both;
+}
+.hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 22px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold));
+    opacity: 0.55;
+}
+.hero-eyebrow::after {
+    content: '';
+    display: inline-block;
+    width: 22px;
+    height: 1px;
+    background: linear-gradient(to left, transparent, var(--gold));
+    opacity: 0.55;
 }
 .hero-title {
     font-family: 'Bebas Neue', sans-serif !important;
-    font-size: clamp(2.8rem, 5.5vw, 5.2rem) !important;
-    letter-spacing: 0.04em !important;
+    font-size: clamp(3.2rem, 6vw, 5.8rem) !important;
+    letter-spacing: 0.05em !important;
     color: var(--text) !important;
-    line-height: 0.92 !important;
-    margin: 0 !important; padding: 0 !important;
+    line-height: 0.9 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    animation: fadeUp 0.55s ease 0.08s both;
+}
+.hero-title-gold {
+    color: var(--gold);
+    display: block;
 }
 .hero-sub {
     font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.25em;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
     color: var(--muted);
     text-transform: uppercase;
-    margin-top: 0.5rem;
+    margin-top: 0.7rem;
     display: block;
+    animation: fadeUp 0.55s ease 0.16s both;
 }
 .hero-rule {
     height: 1px;
-    background: linear-gradient(to right, var(--gold), rgba(197,160,40,0.15), transparent);
-    margin: 1.1rem 0 0;
+    background: linear-gradient(to right, var(--gold) 0%, rgba(201,162,39,0.18) 45%, transparent 100%);
+    margin: 1.3rem 0 0;
+}
+.hero-rule::after {
+    content: '';
+    display: block;
+    height: 1px;
+    margin-top: 2px;
+    background: linear-gradient(to right, rgba(201,162,39,0.1) 0%, transparent 40%);
 }
 
-/* ══════════════════════════════════════════
-   Metric cards (globales)
-══════════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   METRIC CARDS
+══════════════════════════════════════════════ */
+@keyframes shimmer {
+    0%   { left: -60%; }
+    100% { left: 130%; }
+}
+
 .metrics-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 0.7rem;
-    margin: 1.1rem 0 0.5rem;
+    gap: 0.85rem;
+    margin: 1.6rem 0 0.6rem;
 }
 .m-card {
-    background: linear-gradient(135deg, var(--card) 0%, var(--elevated) 100%);
+    position: relative;
+    background: linear-gradient(145deg, var(--card) 0%, var(--elevated) 100%);
     border: 1px solid var(--border);
     border-top: 2px solid var(--gold);
-    padding: 1.15rem 1.3rem;
-    border-radius: 2px;
-    position: relative;
+    padding: 1.4rem 1.5rem 1.25rem;
+    border-radius: var(--r);
     overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    cursor: default;
 }
 .m-card::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 0% 100%, rgba(197,160,40,0.05), transparent 60%);
+    background: radial-gradient(ellipse 75% 65% at 0% 100%, rgba(201,162,39,0.07), transparent 60%);
     pointer-events: none;
 }
-.m-val {
-    display: block;
+.m-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 30%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.022) 50%, transparent 100%);
+    animation: shimmer 5s ease-in-out 0.8s infinite;
+    pointer-events: none;
+}
+.m-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 44px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,162,39,0.14);
+    border-color: rgba(201,162,39,0.3);
+}
+.m-ghost {
+    position: absolute;
+    bottom: -0.3rem;
+    right: 0.8rem;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.9rem;
+    font-size: 3.5rem;
+    color: rgba(201,162,39,0.05);
+    line-height: 1;
+    letter-spacing: 0.05em;
+    user-select: none;
+    pointer-events: none;
+}
+.m-num {
+    display: block;
+    position: relative;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.1rem;
     color: var(--gold);
     line-height: 1;
     letter-spacing: 0.02em;
+    text-shadow: 0 0 28px rgba(201,162,39,0.18);
 }
-.m-lbl {
+.m-label {
     display: block;
+    position: relative;
     font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
+    font-size: 0.57rem;
     color: var(--muted);
-    letter-spacing: 0.22em;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
-    margin-top: 0.2rem;
+    margin-top: 0.32rem;
 }
 
-/* ══════════════════════════════════════════
-   Sidebar header
-══════════════════════════════════════════ */
-.sidebar-head { padding: 1rem 0 0.5rem; text-align: center; }
-.sidebar-emblem {
-    font-size: 2.2rem;
-    display: block;
-    margin-bottom: 0.3rem;
-    filter: drop-shadow(0 0 8px rgba(197,160,40,0.3));
+/* ══════════════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════════════ */
+.sidebar-head {
+    padding: 1.3rem 0 0.8rem;
+    text-align: center;
+}
+.sidebar-crest-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 0.7rem;
+    border: 1px solid var(--gold-mid);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,162,39,0.12), rgba(201,162,39,0.03));
+    box-shadow: 0 0 18px rgba(201,162,39,0.1), inset 0 0 8px rgba(201,162,39,0.05);
+}
+.sidebar-crest-rm {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    line-height: 1;
 }
 .sidebar-club {
     display: block;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.4rem;
-    letter-spacing: 0.2em;
+    font-size: 1.35rem;
+    letter-spacing: 0.28em;
     color: var(--gold);
     line-height: 1;
 }
 .sidebar-season {
     display: block;
     font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.25em;
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
     color: var(--muted);
     text-transform: uppercase;
-    margin-top: 0.3rem;
+    margin-top: 0.38rem;
 }
-.sidebar-rule {
+.sidebar-divider {
+    margin: 1rem 0;
     height: 1px;
-    background: linear-gradient(to right, transparent, rgba(197,160,40,0.3), transparent);
-    margin: 0.85rem 0 1rem;
+    background: linear-gradient(to right, transparent, var(--border-2), transparent);
 }
+.sidebar-section-label {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.56rem;
+    letter-spacing: 0.24em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.55rem;
+}
+
+/* ══════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════ */
+.footer-wrap { margin-top: 2.5rem; padding-bottom: 1.2rem; }
+.footer-sep {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border-2), transparent);
+    margin-bottom: 1rem;
+}
+.footer-text {
+    text-align: center;
+    font-family: 'DM Mono', monospace !important;
+    font-size: 0.58rem !important;
+    letter-spacing: 0.2em !important;
+    color: var(--muted) !important;
+    text-transform: uppercase !important;
+}
+.footer-text a {
+    color: var(--gold) !important;
+    text-decoration: none !important;
+    transition: opacity 0.2s !important;
+}
+.footer-text a:hover { opacity: 0.75 !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -375,28 +588,28 @@ def _hex_rgba(hex_color: str, alpha: float) -> str:
 
 
 def apply_chart_theme(fig: go.Figure, title: str = "") -> go.Figure:
-    """Applique le thème Estadio Oscuro à tout graphique Plotly."""
+    """Applique le thème Bernabéu Noir à tout graphique Plotly."""
     layout: dict = dict(
         template="plotly_dark",
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#536070", family="DM Mono, monospace", size=11),
-        margin=dict(l=40, r=16, t=55 if title else 28, b=36),
+        font=dict(color="#445566", family="DM Mono, monospace", size=11),
+        margin=dict(l=40, r=16, t=58 if title else 28, b=36),
         legend=dict(
-            bgcolor="rgba(13,20,34,0.88)",
-            bordercolor="#18263a",
+            bgcolor="rgba(11,18,30,0.92)",
+            bordercolor="#1e3050",
             borderwidth=1,
-            font=dict(color="#ddd9cc", family="DM Mono, monospace", size=10),
+            font=dict(color="#8fa0b2", family="DM Mono, monospace", size=10),
         ),
     )
     if title:
         layout["title"] = dict(
             text=title.upper(),
-            font=dict(family="Bebas Neue, sans-serif", size=18, color="#ddd9cc"),
+            font=dict(family="Bebas Neue, sans-serif", size=20, color="#e6e0d0"),
             x=0, xanchor="left", pad=dict(l=4, b=8),
         )
-    fig.update_xaxes(gridcolor="#18263a", linecolor="#18263a", zerolinecolor="#18263a")
-    fig.update_yaxes(gridcolor="#18263a", linecolor="#18263a", zerolinecolor="#18263a")
+    fig.update_xaxes(gridcolor="#152338", linecolor="#1e3050", zerolinecolor="#1e3050", tickfont=dict(color="#445566", family="DM Mono, monospace", size=10))
+    fig.update_yaxes(gridcolor="#152338", linecolor="#1e3050", zerolinecolor="#1e3050", tickfont=dict(color="#445566", family="DM Mono, monospace", size=10))
     fig.update_layout(**layout)
     return fig
 
@@ -495,10 +708,13 @@ def color_note(val) -> str:
 def render_sidebar(df: pd.DataFrame) -> tuple[list[str], list[str]]:
     st.sidebar.markdown("""
 <div class="sidebar-head">
+    <div class="sidebar-crest-wrap">
+        <span class="sidebar-crest-rm">RM</span>
+    </div>
     <span class="sidebar-club">REAL MADRID</span>
     <span class="sidebar-season">Saison 2025 — 2026</span>
 </div>
-<div class="sidebar-rule"></div>
+<div class="sidebar-divider"></div>
 """, unsafe_allow_html=True)
 
     all_comps = sorted(df["competition"].unique()) if not df.empty else []
@@ -506,9 +722,7 @@ def render_sidebar(df: pd.DataFrame) -> tuple[list[str], list[str]]:
 
     # Checkboxes par compétition
     st.sidebar.markdown(
-        '<p style="font-family:\'DM Mono\',monospace;font-size:0.65rem;'
-        'letter-spacing:0.18em;color:#536070;text-transform:uppercase;margin-bottom:0.4rem">'
-        'Compétitions</p>',
+        '<span class="sidebar-section-label">Compétitions</span>',
         unsafe_allow_html=True,
     )
     selected_comps = [
@@ -516,7 +730,7 @@ def render_sidebar(df: pd.DataFrame) -> tuple[list[str], list[str]]:
         if st.sidebar.checkbox(comp, value=True, key=f"comp_{comp}")
     ]
 
-    st.sidebar.markdown("---")
+    st.sidebar.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
 
     selected_players = st.sidebar.multiselect(
         "Joueurs",
@@ -654,11 +868,11 @@ def tab_evolution(df: pd.DataFrame, selected_players: list[str], selected_comps:
         hovermode="x unified",
         height=500,
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        hoverlabel=dict(bgcolor="#0d1422", bordercolor="#18263a", font_family="DM Mono, monospace"),
+        hoverlabel=dict(bgcolor="#0c1624", bordercolor="#1e3050", font_family="DM Mono, monospace"),
     )
     apply_chart_theme(fig, "Évolution des notes")
-    fig.update_xaxes(title_text="Date", title_font=dict(color="#536070", size=11))
-    fig.update_yaxes(title_text="Note /10", title_font=dict(color="#536070", size=11))
+    fig.update_xaxes(title_text="Date", title_font=dict(color="#445566", size=11))
+    fig.update_yaxes(title_text="Note /10", title_font=dict(color="#445566", size=11))
 
     st.plotly_chart(fig, use_container_width=True)
 
@@ -740,7 +954,7 @@ def tab_comparaison(stats: list[dict], selected_players: list[str], selected_com
                 legend=dict(orientation="h", yanchor="bottom", y=1.02),
                 bargap=0.2,
                 bargroupgap=0.05,
-                hoverlabel=dict(bgcolor="#0d1422", bordercolor="#18263a", font_family="DM Mono, monospace"),
+                hoverlabel=dict(bgcolor="#0c1624", bordercolor="#1e3050", font_family="DM Mono, monospace"),
             )
             apply_chart_theme(fig_bar, "Moyennes par compétition")
             st.plotly_chart(fig_bar, use_container_width=True)
@@ -784,20 +998,20 @@ def tab_comparaison(stats: list[dict], selected_players: list[str], selected_com
                 radialaxis=dict(
                     visible=True,
                     range=[0, 10],
-                    gridcolor="#18263a",
-                    linecolor="#18263a",
-                    tickfont=dict(color="#536070", family="DM Mono", size=9),
-                    tickcolor="#536070",
+                    gridcolor="#152338",
+                    linecolor="#1e3050",
+                    tickfont=dict(color="#445566", family="DM Mono", size=9),
+                    tickcolor="#445566",
                 ),
                 angularaxis=dict(
-                    gridcolor="#18263a",
-                    linecolor="#18263a",
-                    tickfont=dict(color="#ddd9cc", family="DM Mono", size=10),
+                    gridcolor="#152338",
+                    linecolor="#1e3050",
+                    tickfont=dict(color="#8fa0b2", family="DM Mono", size=10),
                 ),
             ),
             showlegend=True,
             height=420,
-            hoverlabel=dict(bgcolor="#0d1422", bordercolor="#18263a", font_family="DM Mono, monospace"),
+            hoverlabel=dict(bgcolor="#0c1624", bordercolor="#1e3050", font_family="DM Mono, monospace"),
         )
         apply_chart_theme(fig_radar, "Profil multi-compétition")
         st.plotly_chart(fig_radar, use_container_width=True)
@@ -899,9 +1113,10 @@ def main() -> None:
     if not articles:
         st.markdown("""
 <div class="hero-wrap">
+    <div class="hero-bg-mark">REAL MADRID</div>
     <span class="hero-eyebrow">Saison 2025 — 2026</span>
-    <h1 class="hero-title">REAL MADRID</h1>
-    <span class="hero-sub">Notes de match · Le Journal du Real</span>
+    <h1 class="hero-title">REAL MADRID<br><span class="hero-title-gold">Notes de Match</span></h1>
+    <span class="hero-sub">Le Journal du Real · Analyse de performance</span>
     <div class="hero-rule"></div>
 </div>
 """, unsafe_allow_html=True)
@@ -919,9 +1134,10 @@ def main() -> None:
     # Hero
     st.markdown("""
 <div class="hero-wrap">
+    <div class="hero-bg-mark">REAL MADRID</div>
     <span class="hero-eyebrow">Saison 2025 — 2026</span>
-    <h1 class="hero-title">REAL MADRID</h1>
-    <span class="hero-sub">Notes de match · Le Journal du Real</span>
+    <h1 class="hero-title">REAL MADRID<br><span class="hero-title-gold">Notes de Match</span></h1>
+    <span class="hero-sub">Le Journal du Real · Analyse de performance</span>
     <div class="hero-rule"></div>
 </div>
 """, unsafe_allow_html=True)
@@ -935,20 +1151,24 @@ def main() -> None:
     st.markdown(f"""
 <div class="metrics-grid">
     <div class="m-card">
-        <span class="m-val">{n_articles}</span>
-        <span class="m-lbl">Articles scrapés</span>
+        <span class="m-ghost">ART</span>
+        <span class="m-num">{n_articles}</span>
+        <span class="m-label">Articles analysés</span>
     </div>
     <div class="m-card">
-        <span class="m-val">{n_players}</span>
-        <span class="m-lbl">Joueurs uniques</span>
+        <span class="m-ghost">JRS</span>
+        <span class="m-num">{n_players}</span>
+        <span class="m-label">Joueurs évalués</span>
     </div>
     <div class="m-card">
-        <span class="m-val">{avg_note}</span>
-        <span class="m-lbl">Note moyenne</span>
+        <span class="m-ghost">MOY</span>
+        <span class="m-num">{avg_note}</span>
+        <span class="m-label">Moyenne générale</span>
     </div>
     <div class="m-card">
-        <span class="m-val">{n_comps}</span>
-        <span class="m-lbl">Compétitions</span>
+        <span class="m-ghost">CUP</span>
+        <span class="m-num">{n_comps}</span>
+        <span class="m-label">Compétitions</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -977,11 +1197,13 @@ def main() -> None:
 
     # Footer
     st.markdown("""
-<hr style="margin-top:2rem">
-<p style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;color:#536070;text-align:center;text-transform:uppercase">
-    Données · <a href="https://lejournaldureal.fr" target="_blank" style="color:#c5a028;text-decoration:none">lejournaldureal.fr</a>
-    &nbsp;·&nbsp; 2025-2026
-</p>
+<div class="footer-wrap">
+    <div class="footer-sep"></div>
+    <p class="footer-text">
+        Données · <a href="https://lejournaldureal.fr" target="_blank">lejournaldureal.fr</a>
+        &nbsp;·&nbsp; Saison 2025–2026
+    </p>
+</div>
 """, unsafe_allow_html=True)
 
 
