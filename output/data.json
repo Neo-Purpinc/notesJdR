@@ -1,5 +1,66 @@
 [
   {
+    "url": "https://lejournaldureal.fr/2026/02/21/osasuna-real-madrid-notes?categorie=actualites",
+    "title": "Osasuna - Real Madrid (2-1) : les notes de la rencontre !",
+    "date": "2026-02-21",
+    "competition": "Liga",
+    "opponent": "Osasuna",
+    "players": [
+      {
+        "name": "Thibaut Courtois",
+        "note": 4
+      },
+      {
+        "name": "Dani Carvajal",
+        "note": 4
+      },
+      {
+        "name": "Raul Asencio",
+        "note": 3
+      },
+      {
+        "name": "David Alaba",
+        "note": 4
+      },
+      {
+        "name": "Alvaro Carreras",
+        "note": 6
+      },
+      {
+        "name": "Aurélien Tchouaméni",
+        "note": 4
+      },
+      {
+        "name": "Federico Valverde",
+        "note": 5
+      },
+      {
+        "name": "Vinicius Jr",
+        "note": 6
+      },
+      {
+        "name": "Kylian Mbappé",
+        "note": 3
+      },
+      {
+        "name": "Brahim Diaz",
+        "note": null
+      },
+      {
+        "name": "Trent Alexander-Arnold",
+        "note": null
+      },
+      {
+        "name": "Jacobo García",
+        "note": null
+      },
+      {
+        "name": "Dani Ceballos",
+        "note": null
+      }
+    ]
+  },
+  {
     "url": "https://lejournaldureal.fr/2026/02/17/benfica-real-madrid-notes-2?categorie=actualites",
     "title": "Benfica - Real Madrid (0-1) : les notes du match !",
     "date": "2026-02-17",

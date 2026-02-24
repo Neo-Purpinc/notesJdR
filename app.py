@@ -5,8 +5,6 @@ Lancer avec : streamlit run app.py
 """
 
 import json
-import subprocess
-import sys
 from pathlib import Path
 
 import pandas as pd
@@ -506,12 +504,19 @@ def render_sidebar(df: pd.DataFrame) -> tuple[list[str], list[str]]:
     all_comps = sorted(df["competition"].unique()) if not df.empty else []
     all_players = sorted(df["joueur"].unique()) if not df.empty else []
 
-    selected_comps = st.sidebar.multiselect(
-        "Compétition",
-        options=all_comps,
-        default=all_comps,
-        format_func=lambda c: c,
+    # Checkboxes par compétition
+    st.sidebar.markdown(
+        '<p style="font-family:\'DM Mono\',monospace;font-size:0.65rem;'
+        'letter-spacing:0.18em;color:#536070;text-transform:uppercase;margin-bottom:0.4rem">'
+        'Compétitions</p>',
+        unsafe_allow_html=True,
     )
+    selected_comps = [
+        comp for comp in all_comps
+        if st.sidebar.checkbox(comp, value=True, key=f"comp_{comp}")
+    ]
+
+    st.sidebar.markdown("---")
 
     selected_players = st.sidebar.multiselect(
         "Joueurs",
@@ -519,28 +524,6 @@ def render_sidebar(df: pd.DataFrame) -> tuple[list[str], list[str]]:
         default=[],
         placeholder="Tous les joueurs",
     )
-
-    st.sidebar.markdown("---")
-
-    if st.sidebar.button("Rafraîchir les données", use_container_width=True):
-        with st.spinner("Scraping en cours…"):
-            try:
-                result = subprocess.run(
-                    [sys.executable, "main.py", "--refresh"],
-                    capture_output=True,
-                    text=True,
-                    timeout=300,
-                )
-                if result.returncode == 0:
-                    st.cache_data.clear()
-                    st.sidebar.success("Données mises à jour !")
-                    st.rerun()
-                else:
-                    st.sidebar.error(f"Erreur scraping:\n{result.stderr[:500]}")
-            except subprocess.TimeoutExpired:
-                st.sidebar.error("Timeout (>5 min). Relancez manuellement.")
-            except Exception as e:
-                st.sidebar.error(f"Erreur: {e}")
 
     return selected_comps, selected_players
 
@@ -607,8 +590,9 @@ def tab_evolution(df: pd.DataFrame, selected_players: list[str], selected_comps:
         return
 
     players_available = sorted(df_f["joueur"].unique())
+    _trio = ["Kylian Mbappé", "Vinicius Jr", "Jude Bellingham"]
     if not selected_players:
-        default_players = players_available[:5]
+        default_players = [p for p in _trio if p in players_available] or players_available[:3]
     else:
         default_players = [p for p in selected_players if p in players_available]
 
@@ -694,7 +678,9 @@ def tab_comparaison(stats: list[dict], selected_players: list[str], selected_com
     players_choice = st.multiselect(
         "Joueurs à comparer",
         options=all_players,
-        default=selected_players[:4] if selected_players else all_players[:4],
+        default=(selected_players[:4] if selected_players else
+                 [p for p in ["Kylian Mbappé", "Vinicius Jr", "Jude Bellingham"] if p in all_players]
+                 or all_players[:3]),
         key="comp_players",
     )
 
