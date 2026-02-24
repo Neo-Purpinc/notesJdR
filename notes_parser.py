@@ -26,6 +26,7 @@ NAME_ALIASES: dict[str, str] = {
     "Carvajal": "Dani Carvajal",
     "Militao": "Éder Militão",
     "Militão": "Éder Militão",
+    "Alaba": "David Alaba",
     "Rudiger": "Antonio Rüdiger",
     "Rüdiger": "Antonio Rüdiger",
     "Asencio": "Raul Asencio",
@@ -39,6 +40,7 @@ NAME_ALIASES: dict[str, str] = {
     "Tchouameni": "Aurélien Tchouaméni",
     "Tchouaméni": "Aurélien Tchouaméni",
     "Camavinga": "Eduardo Camavinga",
+    "Camvinga": "Eduardo Camavinga",   # typo récurrent sur le site
     "Modric": "Luka Modrić",
     "Modrić": "Luka Modrić",
     "Kroos": "Toni Kroos",
