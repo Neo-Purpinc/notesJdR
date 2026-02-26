@@ -954,13 +954,14 @@ def _sidebar_toggle_group(
 html,body{{background:#060f1c;overflow:hidden;font-family:-apple-system,sans-serif}}
 .grp{{display:flex;width:100%;height:64px;border:1px solid #ccc;border-radius:3px;overflow:hidden}}
 .btn{{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;
-  padding:5px 4px;background:#fff;border:none;border-right:1px solid #e0e0e0;
+  padding:5px 4px;background:#d8d8d8;border:none;border-right:1px solid #bbb;
   color:#888;font-size:0.55rem;letter-spacing:.06em;text-transform:uppercase;
   cursor:pointer;transition:background .15s,color .15s}}
 .btn:last-child{{border-right:none}}
-.btn:hover{{background:#f7f7f7}}
-.btn.active{{color:#c9a227}}
-.icon-wrap{{display:flex;align-items:center;justify-content:center;border-radius:4px;padding:3px}}
+.btn:hover{{background:#e8e8e8}}
+.btn.active{{background:#fff;color:#c9a227;border-right-color:#e0e0e0}}
+.icon-wrap{{display:flex;align-items:center;justify-content:center;
+  background:#fff;border-radius:4px;padding:3px}}
 .btn img{{height:36px;max-width:56px;object-fit:contain;
   filter:grayscale(100%) opacity(35%);transition:filter .15s}}
 .btn.active img{{filter:none}}
