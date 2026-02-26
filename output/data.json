@@ -1,5 +1,70 @@
 [
   {
+    "url": "https://lejournaldureal.fr/2026/02/25/real-madrid-benfica-notes?categorie=actualites",
+    "title": "Real Madrid - Benfica (2-1) : les notes du match !",
+    "date": "2026-02-25",
+    "competition": "Ligue des Champions",
+    "opponent": "Benfica",
+    "players": [
+      {
+        "name": "Thibaut Courtois",
+        "note": 7
+      },
+      {
+        "name": "Trent Alexander-Arnold",
+        "note": 4
+      },
+      {
+        "name": "Antonio Rüdiger",
+        "note": 5
+      },
+      {
+        "name": "Raul Asencio",
+        "note": 2
+      },
+      {
+        "name": "Alvaro Carreras",
+        "note": 4
+      },
+      {
+        "name": "Aurélien Tchouaméni",
+        "note": 8
+      },
+      {
+        "name": "Federico Valverde",
+        "note": 8
+      },
+      {
+        "name": "Vinicius Jr",
+        "note": 7
+      },
+      {
+        "name": "Gonzalo García",
+        "note": 3
+      },
+      {
+        "name": "Franco Mastantuono",
+        "note": null
+      },
+      {
+        "name": "David Alaba",
+        "note": null
+      },
+      {
+        "name": "César Palacios",
+        "note": null
+      },
+      {
+        "name": "Thiago Pitarch",
+        "note": null
+      },
+      {
+        "name": "Fran García",
+        "note": null
+      }
+    ]
+  },
+  {
     "url": "https://lejournaldureal.fr/2026/02/21/osasuna-real-madrid-notes?categorie=actualites",
     "title": "Osasuna - Real Madrid (2-1) : les notes de la rencontre !",
     "date": "2026-02-21",

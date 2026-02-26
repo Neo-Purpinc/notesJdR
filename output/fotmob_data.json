@@ -1,9 +1,9 @@
 [
   {
-    "match_id": 4947119,
-    "date": "2026-02-25",
-    "competition": "Champions League Final Stage",
-    "opponent": "Benfica",
+    "match_id": 4837194,
+    "date": "2026-03-02",
+    "competition": "LaLiga",
+    "opponent": "Getafe",
     "score": null,
     "players": [
       {
@@ -97,14 +97,14 @@
         "image_url": "https://images.fotmob.com/image_resources/playerimages/1015185.png"
       },
       {
-        "name": "Kylian Mbappé",
-        "player_id": 701154,
+        "name": "Gonzalo García",
+        "player_id": 1413847,
         "rating": null,
         "goals": 0,
         "assists": 0,
         "yellow_cards": 0,
         "red_cards": 0,
-        "image_url": "https://images.fotmob.com/image_resources/playerimages/701154.png"
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1413847.png"
       },
       {
         "name": "Vinicius Jr",
@@ -115,6 +115,365 @@
         "yellow_cards": 0,
         "red_cards": 0,
         "image_url": "https://images.fotmob.com/image_resources/playerimages/846033.png"
+      },
+      {
+        "name": "Andriy Lunin",
+        "player_id": 800882,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/800882.png"
+      },
+      {
+        "name": "Fran González",
+        "player_id": 1484851,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1484851.png"
+      },
+      {
+        "name": "Dani Carvajal",
+        "player_id": 282674,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/282674.png"
+      },
+      {
+        "name": "David Alaba",
+        "player_id": 121633,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/121633.png"
+      },
+      {
+        "name": "Ferland Mendy",
+        "player_id": 623537,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/623537.png"
+      },
+      {
+        "name": "Francisco Garcia",
+        "player_id": 750028,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/750028.png"
+      },
+      {
+        "name": "César Palacios",
+        "player_id": 1403691,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1403691.png"
+      },
+      {
+        "name": "Jorge Cestero",
+        "player_id": 1807277,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1807277.png"
+      },
+      {
+        "name": "Manuel Angel",
+        "player_id": 1508427,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1508427.png"
+      },
+      {
+        "name": "Thiago Pitarch",
+        "player_id": 1796908,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1796908.png"
+      },
+      {
+        "name": "Brahim Diaz",
+        "player_id": 750027,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/750027.png"
+      },
+      {
+        "name": "Franco Mastantuono",
+        "player_id": 1607566,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1607566.png"
+      }
+    ]
+  },
+  {
+    "match_id": 4947119,
+    "date": "2026-02-25",
+    "competition": "Champions League Final Stage",
+    "opponent": "Benfica",
+    "score": "2 - 1",
+    "players": [
+      {
+        "name": "Thibaut Courtois",
+        "player_id": 170323,
+        "rating": 7.3,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/170323.png"
+      },
+      {
+        "name": "Trent Alexander-Arnold",
+        "player_id": 760712,
+        "rating": 7.2,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/760712.png"
+      },
+      {
+        "name": "Raul Asencio",
+        "player_id": 1580528,
+        "rating": 5.9,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 1,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1580528.png"
+      },
+      {
+        "name": "Antonio Rüdiger",
+        "player_id": 276738,
+        "rating": 6.9,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/276738.png"
+      },
+      {
+        "name": "Alvaro Carreras",
+        "player_id": 1190025,
+        "rating": 7.6,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1190025.png"
+      },
+      {
+        "name": "Federico Valverde",
+        "player_id": 743533,
+        "rating": 8.7,
+        "goals": 0,
+        "assists": 2,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/743533.png"
+      },
+      {
+        "name": "Arda Güler",
+        "player_id": 1253890,
+        "rating": 7.5,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1253890.png"
+      },
+      {
+        "name": "Aurélien Tchouaméni",
+        "player_id": 914458,
+        "rating": 7.9,
+        "goals": 1,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/914458.png"
+      },
+      {
+        "name": "Eduardo Camavinga",
+        "player_id": 1015185,
+        "rating": 7.5,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1015185.png"
+      },
+      {
+        "name": "Gonzalo García",
+        "player_id": 1413847,
+        "rating": 6.8,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1413847.png"
+      },
+      {
+        "name": "Vinicius Jr",
+        "player_id": 846033,
+        "rating": 7.6,
+        "goals": 1,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/846033.png"
+      },
+      {
+        "name": "David Alaba",
+        "player_id": 121633,
+        "rating": 6.3,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/121633.png"
+      },
+      {
+        "name": "Franco Mastantuono",
+        "player_id": 1607566,
+        "rating": 6.5,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1607566.png"
+      },
+      {
+        "name": "César Palacios",
+        "player_id": 1403691,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 1,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1403691.png"
+      },
+      {
+        "name": "Thiago Pitarch",
+        "player_id": 1796908,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1796908.png"
+      },
+      {
+        "name": "Francisco Garcia",
+        "player_id": 750028,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/750028.png"
+      },
+      {
+        "name": "Andriy Lunin",
+        "player_id": 800882,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/800882.png"
+      },
+      {
+        "name": "Fran González",
+        "player_id": 1484851,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1484851.png"
+      },
+      {
+        "name": "Dani Carvajal",
+        "player_id": 282674,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/282674.png"
+      },
+      {
+        "name": "Ferland Mendy",
+        "player_id": 623537,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/623537.png"
+      },
+      {
+        "name": "Jorge Cestero",
+        "player_id": 1807277,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1807277.png"
+      },
+      {
+        "name": "Manuel Angel",
+        "player_id": 1508427,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1508427.png"
+      },
+      {
+        "name": "Brahim Diaz",
+        "player_id": 750027,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/750027.png"
       }
     ]
   },
@@ -123,12 +482,12 @@
     "date": "2026-02-25",
     "competition": "Champions League Final Stage",
     "opponent": "Benfica",
-    "score": null,
+    "score": "2 - 1",
     "players": [
       {
         "name": "Thibaut Courtois",
         "player_id": 170323,
-        "rating": null,
+        "rating": 7.3,
         "goals": 0,
         "assists": 0,
         "yellow_cards": 0,
@@ -138,7 +497,7 @@
       {
         "name": "Trent Alexander-Arnold",
         "player_id": 760712,
-        "rating": null,
+        "rating": 7.2,
         "goals": 0,
         "assists": 0,
         "yellow_cards": 0,
@@ -148,17 +507,17 @@
       {
         "name": "Raul Asencio",
         "player_id": 1580528,
-        "rating": null,
+        "rating": 5.9,
         "goals": 0,
         "assists": 0,
-        "yellow_cards": 0,
+        "yellow_cards": 1,
         "red_cards": 0,
         "image_url": "https://images.fotmob.com/image_resources/playerimages/1580528.png"
       },
       {
         "name": "Antonio Rüdiger",
         "player_id": 276738,
-        "rating": null,
+        "rating": 6.9,
         "goals": 0,
         "assists": 0,
         "yellow_cards": 0,
@@ -168,7 +527,7 @@
       {
         "name": "Alvaro Carreras",
         "player_id": 1190025,
-        "rating": null,
+        "rating": 7.6,
         "goals": 0,
         "assists": 0,
         "yellow_cards": 0,
@@ -178,9 +537,9 @@
       {
         "name": "Federico Valverde",
         "player_id": 743533,
-        "rating": null,
+        "rating": 8.7,
         "goals": 0,
-        "assists": 0,
+        "assists": 2,
         "yellow_cards": 0,
         "red_cards": 0,
         "image_url": "https://images.fotmob.com/image_resources/playerimages/743533.png"
@@ -188,7 +547,7 @@
       {
         "name": "Arda Güler",
         "player_id": 1253890,
-        "rating": null,
+        "rating": 7.5,
         "goals": 0,
         "assists": 0,
         "yellow_cards": 0,
@@ -198,8 +557,8 @@
       {
         "name": "Aurélien Tchouaméni",
         "player_id": 914458,
-        "rating": null,
-        "goals": 0,
+        "rating": 7.9,
+        "goals": 1,
         "assists": 0,
         "yellow_cards": 0,
         "red_cards": 0,
@@ -208,7 +567,7 @@
       {
         "name": "Eduardo Camavinga",
         "player_id": 1015185,
-        "rating": null,
+        "rating": 7.5,
         "goals": 0,
         "assists": 0,
         "yellow_cards": 0,
@@ -216,24 +575,144 @@
         "image_url": "https://images.fotmob.com/image_resources/playerimages/1015185.png"
       },
       {
-        "name": "Kylian Mbappé",
-        "player_id": 701154,
-        "rating": null,
+        "name": "Gonzalo García",
+        "player_id": 1413847,
+        "rating": 6.8,
         "goals": 0,
         "assists": 0,
         "yellow_cards": 0,
         "red_cards": 0,
-        "image_url": "https://images.fotmob.com/image_resources/playerimages/701154.png"
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1413847.png"
       },
       {
         "name": "Vinicius Jr",
         "player_id": 846033,
+        "rating": 7.6,
+        "goals": 1,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/846033.png"
+      },
+      {
+        "name": "David Alaba",
+        "player_id": 121633,
+        "rating": 6.3,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/121633.png"
+      },
+      {
+        "name": "Franco Mastantuono",
+        "player_id": 1607566,
+        "rating": 6.5,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1607566.png"
+      },
+      {
+        "name": "César Palacios",
+        "player_id": 1403691,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 1,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1403691.png"
+      },
+      {
+        "name": "Thiago Pitarch",
+        "player_id": 1796908,
         "rating": null,
         "goals": 0,
         "assists": 0,
         "yellow_cards": 0,
         "red_cards": 0,
-        "image_url": "https://images.fotmob.com/image_resources/playerimages/846033.png"
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1796908.png"
+      },
+      {
+        "name": "Francisco Garcia",
+        "player_id": 750028,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/750028.png"
+      },
+      {
+        "name": "Andriy Lunin",
+        "player_id": 800882,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/800882.png"
+      },
+      {
+        "name": "Fran González",
+        "player_id": 1484851,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1484851.png"
+      },
+      {
+        "name": "Dani Carvajal",
+        "player_id": 282674,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/282674.png"
+      },
+      {
+        "name": "Ferland Mendy",
+        "player_id": 623537,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/623537.png"
+      },
+      {
+        "name": "Jorge Cestero",
+        "player_id": 1807277,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1807277.png"
+      },
+      {
+        "name": "Manuel Angel",
+        "player_id": 1508427,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/1508427.png"
+      },
+      {
+        "name": "Brahim Diaz",
+        "player_id": 750027,
+        "rating": null,
+        "goals": 0,
+        "assists": 0,
+        "yellow_cards": 0,
+        "red_cards": 0,
+        "image_url": "https://images.fotmob.com/image_resources/playerimages/750027.png"
       }
     ]
   },
