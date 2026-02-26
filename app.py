@@ -110,7 +110,9 @@ body,
     font-family: 'Outfit', sans-serif !important;
     color: var(--text) !important;
 }
-.stApp > header { display: none !important; }
+/* Keep header visible — sidebar toggle button lives inside it in Streamlit 1.28+ */
+[data-testid="stHeader"] { background: transparent !important; border: none !important; }
+[data-testid="stDecoration"] { display: none !important; }
 #MainMenu, footer, [data-testid="stToolbar"] { visibility: hidden !important; }
 .block-container {
     padding-top: 0.5rem !important;
