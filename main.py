@@ -24,6 +24,7 @@ if sys.stderr.encoding != "utf-8":
 
 from scraper import discover_article_urls, fetch_all_articles, extract_date_from_url
 from notes_parser import parse_article
+from fotmob_scraper import scrape_fotmob
 from averages import (
     compute_stats,
     load_articles,
@@ -84,12 +85,21 @@ def run_scrape(refresh: bool = False) -> list:
 
     logger.info("Articles avec notes : %d | Ignorés : %d", len(articles), skipped)
 
-    # Sauvegarde
+    # Sauvegarde JDR
     save_articles(articles)
-    stats = compute_stats(articles)
+
+    # Scraping FotMob (sauvegarde lui-même dans output/fotmob_data.json)
+    try:
+        scrape_fotmob(refresh=refresh)
+    except Exception as e:
+        logger.error("FotMob scraping failed: %s", e)
+
+    # Retourne des dicts (load_articles) pour compatibilité avec compute_stats()
+    articles_dicts = load_articles()
+    stats = compute_stats(articles_dicts)
     save_stats(stats)
 
-    return articles
+    return articles_dicts
 
 
 def load_or_scrape(refresh: bool = False) -> list:
@@ -186,10 +196,10 @@ def main() -> int:
 
     # Liste des compétitions
     if args.list_competitions:
-        comps = sorted({a.competition for a in articles})
+        comps = sorted({a["competition"] for a in articles})
         print("\nCompétitions trouvées :")
         for comp in comps:
-            count = sum(1 for a in articles if a.competition == comp)
+            count = sum(1 for a in articles if a["competition"] == comp)
             print(f"  {comp:<35} ({count} matchs)")
         return 0
 

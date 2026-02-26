@@ -31,6 +31,7 @@ st.set_page_config(
 OUTPUT_DIR = Path("output")
 DATA_FILE = OUTPUT_DIR / "data.json"
 STATS_FILE = OUTPUT_DIR / "stats.json"
+FOTMOB_FILE = OUTPUT_DIR / "fotmob_data.json"
 
 COMPETITION_ICONS: dict[str, str] = {}  # plus d'icônes
 
@@ -1177,6 +1178,198 @@ def tab_detail(df: pd.DataFrame, selected_players: list[str], selected_comps: li
 
 
 # ---------------------------------------------------------------------------
+# Onglet 5 — Profil joueur
+# ---------------------------------------------------------------------------
+
+def tab_profil_joueur(stats: list[dict]) -> None:
+    st.header("Profil joueur")
+
+    if not stats:
+        st.info("Aucune donnée disponible.")
+        return
+
+    all_players = [s["player_name"] for s in stats]
+    player_name = st.selectbox(
+        "Joueur",
+        options=all_players,
+        key="profil_player",
+    )
+
+    player_data = next((s for s in stats if s["player_name"] == player_name), None)
+    if not player_data:
+        return
+
+    # ── En-tête : photo + métriques ──────────────────────────────────────
+    col_photo, col_stats = st.columns([1, 3])
+
+    with col_photo:
+        image_url = player_data.get("image_url")
+        if image_url:
+            st.markdown(
+                f'<img src="{image_url}" style="width:140px;height:140px;object-fit:cover;'
+                f'border-radius:50%;border:2px solid rgba(201,162,39,0.4);'
+                f'box-shadow:0 0 28px rgba(201,162,39,0.18);display:block;margin:0 auto;">',
+                unsafe_allow_html=True,
+            )
+        else:
+            st.markdown(
+                '<div style="width:140px;height:140px;border-radius:50%;background:rgba(201,162,39,0.06);'
+                'border:2px solid rgba(201,162,39,0.2);display:flex;align-items:center;justify-content:center;'
+                'margin:0 auto;font-family:DM Mono,monospace;color:#445566;font-size:0.7rem;letter-spacing:0.1em;">'
+                'NO IMG</div>',
+                unsafe_allow_html=True,
+            )
+        st.markdown(
+            f'<p style="text-align:center;font-family:Bebas Neue,sans-serif;font-size:1.1rem;'
+            f'letter-spacing:0.12em;color:#c9a227;margin-top:0.7rem;">{player_name}</p>',
+            unsafe_allow_html=True,
+        )
+
+    with col_stats:
+        m1, m2, m3, m4, m5, m6 = st.columns(6)
+        m1.metric("Moy. globale", f"{player_data['moyenne_globale']:.2f}")
+        moy_jdr = player_data.get("moyenne_jdr", 0)
+        moy_fm = player_data.get("moyenne_fotmob", 0)
+        m2.metric("Moy. JDR", f"{moy_jdr:.2f}" if moy_jdr else "—")
+        m3.metric("Moy. FotMob", f"{moy_fm:.2f}" if moy_fm else "—")
+        m4.metric("Buts", player_data.get("total_goals", 0))
+        m5.metric("Passes D.", player_data.get("total_assists", 0))
+        yellows = player_data.get("total_yellow_cards", 0)
+        reds = player_data.get("total_red_cards", 0)
+        m6.metric("Cartons", f"{yellows}J / {reds}R")
+
+        # Ligne 2 : matchs
+        m7, m8, m9, _, _, _ = st.columns(6)
+        m7.metric("Matchs notés", player_data["nb_matchs"])
+        m8.metric("Non notés", player_data.get("nb_matchs_non_notes", 0))
+        m9.metric("Total appars.", player_data.get("nb_matchs_total", player_data["nb_matchs"]))
+
+    st.markdown("---")
+
+    # ── Graphique : évolution JDR + FotMob + combiné ─────────────────────
+    matches = player_data.get("detail_matchs", [])
+    rated_matches = [m for m in matches if m.get("note") is not None or m.get("jdr_note") is not None or m.get("fotmob_note") is not None]
+
+    if rated_matches:
+        dates = [m["date"] for m in rated_matches]
+        opponents = [m.get("opponent") or "?" for m in rated_matches]
+        comps = [m.get("competition", "") for m in rated_matches]
+
+        jdr_notes = [m.get("jdr_note") for m in rated_matches]
+        fm_notes = [m.get("fotmob_note") for m in rated_matches]
+        combined_notes = [m.get("note") for m in rated_matches]
+
+        fig = go.Figure()
+
+        # JDR
+        if any(n is not None for n in jdr_notes):
+            fig.add_trace(go.Scatter(
+                x=dates, y=jdr_notes,
+                mode="lines+markers",
+                name="JDR",
+                line=dict(color="#c9a227", width=2),
+                marker=dict(color="#c9a227", size=7),
+                connectgaps=True,
+                hovertemplate="<b>JDR</b><br>%{x}<br>Note: <b>%{y}/10</b><extra></extra>",
+            ))
+
+        # FotMob
+        if any(n is not None for n in fm_notes):
+            fig.add_trace(go.Scatter(
+                x=dates, y=fm_notes,
+                mode="lines+markers",
+                name="FotMob",
+                line=dict(color="#3b82f6", width=2),
+                marker=dict(color="#3b82f6", size=7),
+                connectgaps=True,
+                hovertemplate="<b>FotMob</b><br>%{x}<br>Note: <b>%{y:.1f}/10</b><extra></extra>",
+            ))
+
+        # Combined (dashed)
+        if any(n is not None for n in combined_notes):
+            fig.add_trace(go.Scatter(
+                x=dates, y=combined_notes,
+                mode="lines",
+                name="Combiné",
+                line=dict(color="#ffffff", width=1.5, dash="dot"),
+                opacity=0.45,
+                connectgaps=True,
+                hovertemplate="<b>Combiné</b><br>%{x}<br>Note: <b>%{y:.2f}/10</b><extra></extra>",
+                customdata=list(zip(opponents, comps)),
+            ))
+
+        fig.update_layout(
+            yaxis=dict(range=[0, 10.5], dtick=1),
+            hovermode="x unified",
+            height=400,
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+            hoverlabel=dict(bgcolor="#0c1624", bordercolor="#1e3050", font_family="DM Mono, monospace"),
+        )
+        apply_chart_theme(fig, f"Évolution des notes — {player_name}")
+        fig.update_xaxes(title_text="Date", title_font=dict(color="#445566", size=11))
+        fig.update_yaxes(title_text="Note /10", title_font=dict(color="#445566", size=11))
+        st.plotly_chart(fig, use_container_width=True)
+
+    # ── Par compétition (barres) ──────────────────────────────────────────
+    par_comp = player_data.get("par_competition", {})
+    if par_comp:
+        comp_names = sorted(par_comp.keys())
+        moyennes = [par_comp[c]["moyenne"] for c in comp_names]
+        nb_matchs = [par_comp[c]["nb_matchs"] for c in comp_names]
+
+        fig_bar = go.Figure(go.Bar(
+            x=comp_names,
+            y=moyennes,
+            text=[f"{m:.2f} ({n}M)" for m, n in zip(moyennes, nb_matchs)],
+            textposition="outside",
+            marker=dict(
+                color=moyennes,
+                colorscale=[[0, "#ef4444"], [0.5, "#f59e0b"], [1, "#22c55e"]],
+                cmin=4, cmax=8,
+                line=dict(color="rgba(201,162,39,0.2)", width=1),
+            ),
+            hovertemplate="<b>%{x}</b><br>Moyenne: %{y:.2f}<br><extra></extra>",
+        ))
+        fig_bar.update_layout(
+            yaxis=dict(range=[0, 10.5]),
+            showlegend=False,
+            height=320,
+            hoverlabel=dict(bgcolor="#0c1624", bordercolor="#1e3050", font_family="DM Mono, monospace"),
+        )
+        apply_chart_theme(fig_bar, "Moyenne par compétition")
+        st.plotly_chart(fig_bar, use_container_width=True)
+
+    # ── Historique des matchs ─────────────────────────────────────────────
+    if matches:
+        st.subheader("Historique des matchs")
+        rows = []
+        for m in sorted(matches, key=lambda x: x["date"], reverse=True):
+            jdr = m.get("jdr_note")
+            fm = m.get("fotmob_note")
+            note = m.get("note")
+            rows.append({
+                "Date": m["date"],
+                "Adversaire": m.get("opponent") or "?",
+                "Compétition": m.get("competition", ""),
+                "JDR": jdr,
+                "FotMob": round(fm, 1) if fm is not None else None,
+                "Combiné": round(note, 2) if note is not None else None,
+                "Buts": m.get("goals", 0) or 0,
+                "Passes D.": m.get("assists", 0) or 0,
+            })
+        df_hist = pd.DataFrame(rows)
+        styled = df_hist.style.applymap(color_note, subset=["JDR", "FotMob", "Combiné"]).format(
+            {
+                "JDR": lambda x: "—" if pd.isna(x) else f"{x:.0f}",
+                "FotMob": lambda x: "—" if pd.isna(x) else f"{x:.1f}",
+                "Combiné": lambda x: "—" if pd.isna(x) else f"{x:.2f}",
+            },
+            na_rep="—",
+        )
+        st.dataframe(styled, use_container_width=True, height=min(600, 45 + 35 * len(rows)))
+
+
+# ---------------------------------------------------------------------------
 # Point d'entrée principal
 # ---------------------------------------------------------------------------
 
@@ -1249,11 +1442,12 @@ def main() -> None:
 """, unsafe_allow_html=True)
 
     # Onglets
-    tab1, tab2, tab3, tab4 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
         "Tableau général",
         "Évolution",
         "Comparaison",
-        "Détail",
+        "Détail par match",
+        "Profil joueur",
     ])
 
     df_filtered = df[df["competition"].isin(selected_comps)] if selected_comps else df
@@ -1270,12 +1464,16 @@ def main() -> None:
     with tab4:
         tab_detail(df_filtered, selected_players, selected_comps)
 
+    with tab5:
+        tab_profil_joueur(stats)
+
     # Footer
     st.markdown("""
 <div class="footer-wrap">
     <div class="footer-sep"></div>
     <p class="footer-text">
         Données · <a href="https://lejournaldureal.fr" target="_blank">lejournaldureal.fr</a>
+        &nbsp;·&nbsp; <a href="https://www.fotmob.com" target="_blank">FotMob</a>
         &nbsp;·&nbsp; Saison 2025–2026
     </p>
 </div>

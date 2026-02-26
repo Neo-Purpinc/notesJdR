@@ -6,69 +6,9 @@ import re
 import logging
 from dataclasses import dataclass, field
 
+from utils import normalize_name  # noqa: F401 — re-exported for backward compat
+
 logger = logging.getLogger(__name__)
-
-# ---------------------------------------------------------------------------
-# Normalisation des noms
-# ---------------------------------------------------------------------------
-
-# Mapping variantes de noms → nom canonique (à compléter au fil du temps)
-PLAYER_NAME_MAPPING: dict[str, str] = {
-    "Mastantuono": "Franco Mastantuono",
-}
-
-NAME_ALIASES: dict[str, str] = {
-    # Gardiens
-    "Courtois": "Thibaut Courtois",
-    "Lunin": "Andriy Lunin",
-    "Fran Gonzalez": "Fran González",
-    # Défenseurs
-    "Carvajal": "Dani Carvajal",
-    "Militao": "Éder Militão",
-    "Militão": "Éder Militão",
-    "Alaba": "David Alaba",
-    "Rudiger": "Antonio Rüdiger",
-    "Rüdiger": "Antonio Rüdiger",
-    "Asencio": "Raul Asencio",
-    "Huijsen": "Dean Huijsen",
-    "Carreras": "Alvaro Carreras",
-    "Mendy": "Ferland Mendy",
-    "Gonzalo Garcia": "Gonzalo García",
-    "Gonzalo": "Gonzalo García",
-    "Fran Garcia": "Fran García",
-    # Milieux
-    "Valverde": "Federico Valverde",
-    "Tchouameni": "Aurélien Tchouaméni",
-    "Tchouaméni": "Aurélien Tchouaméni",
-    "Camavinga": "Eduardo Camavinga",
-    "Camvinga": "Eduardo Camavinga",   # typo récurrent sur le site
-    "Modric": "Luka Modrić",
-    "Modrić": "Luka Modrić",
-    "Kroos": "Toni Kroos",
-    "Ceballos": "Dani Ceballos",
-    "Arnold": "Trent Alexander-Arnold",
-    "Trent": "Trent Alexander-Arnold",
-    "Trent Arnold": "Trent Alexander-Arnold",
-    # Attaquants
-    "Vinicius Jr.": "Vinicius Jr",
-    "Vinicius": "Vinicius Jr",
-    "Mbappé": "Kylian Mbappé",
-    "Mbappe": "Kylian Mbappé",
-    "Rodrygo Goes": "Rodrygo",
-    "Güler": "Arda Güler",
-    "Guler": "Arda Güler",
-    "Brahim": "Brahim Diaz",
-    "Brahim Diaz": "Brahim Diaz",
-    "Brahim Díaz": "Brahim Diaz",
-    "Endrick": "Endrick Felipe",
-    # Entraîneurs (exclus des stats joueurs)
-    "Xabi Alonso": "_COACH_",
-    "Ancelotti": "_COACH_",
-    "Carlo Ancelotti": "_COACH_",
-    "Alvaro Arbeloa": "_COACH_",
-    "Álvaro Arbeloa": "_COACH_",
-    "Arbeloa": "_COACH_",
-}
 
 # Regex pour capturer : <strong>Nom Prénom[, remplacé/entré ...] (N/10)</strong>
 # group 1 = nom brut (peut inclure info substitution)
@@ -95,34 +35,6 @@ def _extract_non_noted_name(block_html: str) -> str | None:
     # Nom = tout ce qui précède la première virgule, parenthèse ou deux-points
     m = re.match(r"([^:,(]+?)(?=[,:(]|$)", text)
     return m.group(1).strip() if m else None
-
-# Nettoyage du nom brut (supprime la partie substitution qui resterait)
-_SUBST_RE = re.compile(
-    r",?\s*(?:remplacé|entré en jeu|sorti|exclu)[^(,]*?(?=\s*$|\s*\()",
-    re.IGNORECASE,
-)
-
-
-def normalize_name(raw: str) -> str:
-    """Nettoie et normalise un nom de joueur."""
-    # Supprime les infos de substitution résiduelles
-    name = _SUBST_RE.sub("", raw).strip().strip(",").strip()
-    # Normalise les espaces multiples
-    name = re.sub(r"\s+", " ", name)
-    # Cherche dans le dict d'alias (exact match d'abord)
-    if name in NAME_ALIASES:
-        return NAME_ALIASES[name]
-    # Cherche par nom de famille seul (dernier mot)
-    last_name = name.split()[-1] if name else name
-    if last_name in NAME_ALIASES:
-        return NAME_ALIASES[last_name]
-    # Applique PLAYER_NAME_MAPPING (variantes de noms complets)
-    if name in PLAYER_NAME_MAPPING:
-        return PLAYER_NAME_MAPPING[name]
-    if last_name in PLAYER_NAME_MAPPING:
-        return PLAYER_NAME_MAPPING[last_name]
-    return name
-
 
 # ---------------------------------------------------------------------------
 # Détection de la compétition
