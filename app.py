@@ -8,6 +8,8 @@ import base64
 import json
 from pathlib import Path
 
+import requests
+
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -880,12 +882,37 @@ def color_note(val) -> str:
 # Sidebar
 # ---------------------------------------------------------------------------
 
+@st.cache_data(ttl=86400 * 7, show_spinner=False)
+def _fetch_logo_as_data_uri(src: str) -> str:
+    """Convert a local file path or HTTP URL to a base64 data URI."""
+    if not src or src.startswith("data:"):
+        return src
+    # Local file
+    if not src.startswith("http"):
+        path = Path(src)
+        if not path.exists():
+            return ""
+        suffix = path.suffix.lower().lstrip(".")
+        mime = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png",
+                "svg": "image/svg+xml", "webp": "image/webp"}.get(suffix, "image/png")
+        return f"data:{mime};base64,{base64.b64encode(path.read_bytes()).decode()}"
+    # HTTP URL — fetch server-side to avoid iframe CORS issues
+    try:
+        resp = requests.get(src, timeout=6, headers={"User-Agent": "Mozilla/5.0"})
+        if resp.status_code == 200:
+            ct = resp.headers.get("Content-Type", "image/png").split(";")[0]
+            return f"data:{ct};base64,{base64.b64encode(resp.content).decode()}"
+    except Exception:
+        pass
+    return ""
+
+
 _COMP_LOGOS: dict[str, str] = {
-    "Liga":                 "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/LaLiga_logo_2023.svg/120px-LaLiga_logo_2023.svg.png",
-    "Ligue des Champions":  "https://upload.wikimedia.org/wikipedia/en/thumb/6/67/UEFA_Champions_League_logo.svg/100px-UEFA_Champions_League_logo.svg.png",
-    "Coupe du Roi":         "https://upload.wikimedia.org/wikipedia/en/thumb/9/94/Copa_del_Rey.png/100px-Copa_del_Rey.png",
-    "Supercoupe d'Espagne": "https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Supercopa_de_Espa%C3%B1a_logo.svg/100px-Supercopa_de_Espa%C3%B1a_logo.svg.png",
-    "Intercontinental":     "https://upload.wikimedia.org/wikipedia/en/thumb/5/5a/FIFA_Intercontinental_Cup_Logo.svg/100px-FIFA_Intercontinental_Cup_Logo.svg.png",
+    "Liga":                 "la-liga.png",
+    "Ligue des Champions":  "champions-league.svg",
+    "Coupe du Roi":         "copa-del-rey.png",
+    "Supercoupe d'Espagne": "supercopa.png",
+    "Intercontinental":     "",
     "Amical":               "",
 }
 _COMP_LABELS: dict[str, str] = {
@@ -903,29 +930,33 @@ def _sidebar_toggle_group(
     logos: dict[str, str],
     labels: dict[str, str],
     key: str,
-    height: int = 60,
+    height: int = 68,
 ) -> list[str]:
     """Connected rectangular button group rendered as an HTML component."""
     if key not in st.session_state:
         st.session_state[key] = list(options)
 
-    sel_set = set(st.session_state.get(key, options))
+    # Pre-fetch all logos server-side → base64 data URIs (avoids iframe CORS issues)
+    resolved = {v: _fetch_logo_as_data_uri(logos.get(v, "")) for v in options}
+
+    current = st.session_state.get(key)
+    sel_set = set(current if isinstance(current, list) else options)
     items_js = json.dumps([{
         "value": v,
         "label": labels.get(v, v),
-        "logo":  logos.get(v, ""),
+        "logo":  resolved.get(v, ""),
         "active": v in sel_set,
     } for v in options])
 
     html_str = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><style>
 *{{margin:0;padding:0;box-sizing:border-box}}
 html,body{{background:#060f1c;overflow:hidden;font-family:-apple-system,sans-serif}}
-.grp{{display:flex;width:100%;height:50px;border:1px solid #1e3050;border-radius:3px;overflow:hidden}}
-.btn{{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;padding:4px 3px;background:#0c1624;border:none;border-right:1px solid #1e3050;color:#445566;font-size:0.56rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s,color .15s}}
+.grp{{display:flex;width:100%;height:60px;border:1px solid #1e3050;border-radius:3px;overflow:hidden}}
+.btn{{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;padding:4px 3px;background:#0c1624;border:none;border-right:1px solid #1e3050;color:#445566;font-size:0.55rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s,color .15s}}
 .btn:last-child{{border-right:none}}
 .btn:hover{{background:#111e30;color:#8fa0b2}}
 .btn.active{{background:rgba(201,162,39,.1);color:#c9a227;border-right-color:rgba(201,162,39,.25)}}
-.btn img{{height:18px;max-width:40px;object-fit:contain}}
+.btn img{{height:32px;max-width:52px;object-fit:contain}}
 .lbl{{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
 </style></head><body>
 <div class="grp" id="g"></div>
@@ -937,8 +968,17 @@ function render(){{
   items.forEach(item=>{{
     const b=document.createElement('button');
     b.className='btn'+(sel.includes(item.value)?' active':'');
-    if(item.logo){{const img=document.createElement('img');img.src=item.logo;img.onerror=()=>img.remove();b.appendChild(img);}}
-    const s=document.createElement('span');s.className='lbl';s.textContent=item.label;b.appendChild(s);
+    if(item.logo){{
+      const img=document.createElement('img');
+      img.src=item.logo;
+      img.onerror=()=>{{
+        img.remove();
+        const s=document.createElement('span');s.className='lbl';s.textContent=item.label;b.appendChild(s);
+      }};
+      b.appendChild(img);
+    }}else{{
+      const s=document.createElement('span');s.className='lbl';s.textContent=item.label;b.appendChild(s);
+    }}
     b.onclick=()=>{{
       sel=sel.includes(item.value)?sel.filter(v=>v!==item.value):[...sel,item.value];
       render();Streamlit.setComponentValue(sel);
@@ -950,9 +990,10 @@ render();
 </script></body></html>"""
 
     result = components.html(html_str, height=height, scrolling=False)
-    if result is not None:
+    if isinstance(result, list):
         st.session_state[key] = result
-    return st.session_state.get(key, list(options))
+    current = st.session_state.get(key)
+    return current if isinstance(current, list) else list(options)
 
 
 def render_sidebar(df: pd.DataFrame) -> tuple[list[str], bool, bool]:
@@ -991,9 +1032,9 @@ def render_sidebar(df: pd.DataFrame) -> tuple[list[str], bool, bool]:
 
     # Button group — sources
     fotmob_svg = (
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 20">'
-        '<text y="15" font-family="Arial Black,sans-serif" font-weight="900" '
-        'font-size="13" fill="#01d47e">fotmob</text></svg>'
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 32">'
+        '<text x="2" y="24" font-family="Arial Black,Impact,sans-serif" font-weight="900" '
+        'font-size="22" fill="#01d47e" letter-spacing="-0.5">fotmob</text></svg>'
     )
     fotmob_logo = "data:image/svg+xml;base64," + base64.b64encode(fotmob_svg.encode()).decode()
     jdr_logo = f"data:image/jpeg;base64,{logo_b64}" if logo_b64 else ""
