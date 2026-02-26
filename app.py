@@ -996,15 +996,19 @@ def tab_evolution(matches_df: pd.DataFrame, selected_players: list[str], selecte
                 customdata=pdata[["adversaire", "competition"]].values,
             ))
 
-        if show_rolling and show_combined and pdata["note"].notna().sum() >= 3:
-            rolling = pdata["note"].rolling(window=5, min_periods=2).mean()
-            fig.add_trace(go.Scatter(
-                x=pdata["date"], y=rolling,
-                mode="lines",
-                name=f"{player} (moy. 5)",
-                line=dict(dash="dot", width=1.5, color=color),
-                opacity=0.5, hoverinfo="skip",
-            ))
+        if show_rolling:
+            for r_col, r_label, _, _, _, r_show in SERIES:
+                if not r_show or pdata[r_col].notna().sum() < 3:
+                    continue
+                rolling = pdata[r_col].rolling(window=5, min_periods=2).mean()
+                r_color = color if r_col == "note" else _hex_rgba(color, 0.65)
+                fig.add_trace(go.Scatter(
+                    x=pdata["date"], y=rolling,
+                    mode="lines",
+                    name=f"{player} · {r_label} (moy. 5)",
+                    line=dict(dash="longdash", width=1.2, color=r_color),
+                    opacity=0.45, hoverinfo="skip",
+                ))
 
     fig.update_layout(
         yaxis=dict(range=[0, 10.5], dtick=1),
