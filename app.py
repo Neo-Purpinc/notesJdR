@@ -12,6 +12,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
+import streamlit.components.v1 as components
 
 # ---------------------------------------------------------------------------
 # Configuration de la page
@@ -685,34 +686,14 @@ hr { border: none !important; border-top: 1px solid var(--border) !important; ma
 }
 
 /* ══════════════════════════════════════════════
-   PILLS (sidebar toggle groups)
+   SIDEBAR — toggle group iframes
 ══════════════════════════════════════════════ */
-[data-testid="stSidebar"] [data-testid="stPills"] {
-    gap: 5px !important;
-    flex-wrap: wrap !important;
-    padding: 2px 0 4px !important;
-}
-[data-testid="stSidebar"] [data-testid="stPills"] button {
-    background: var(--elevated) !important;
-    border: 1px solid var(--border-2) !important;
-    color: var(--muted) !important;
-    font-family: 'Outfit', sans-serif !important;
-    font-size: 0.74rem !important;
-    border-radius: 100px !important;
-    padding: 3px 11px !important;
-    transition: border-color 0.15s, color 0.15s, background 0.15s, box-shadow 0.15s !important;
-    white-space: nowrap !important;
-}
-[data-testid="stSidebar"] [data-testid="stPills"] button:hover {
-    border-color: rgba(201,162,39,0.4) !important;
-    color: var(--text-2) !important;
-}
-[data-testid="stSidebar"] [data-testid="stPills"] button[aria-selected="true"],
-[data-testid="stSidebar"] [data-testid="stPills"] button[aria-pressed="true"] {
-    background: var(--gold-dim) !important;
-    border-color: var(--gold) !important;
-    color: var(--gold) !important;
-    box-shadow: 0 0 8px rgba(201,162,39,0.15) !important;
+[data-testid="stSidebar"] .stCustomComponentV1,
+[data-testid="stSidebar"] .stCustomComponentV1 > iframe {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    display: block !important;
 }
 
 /* ══════════════════════════════════════════════
@@ -899,17 +880,79 @@ def color_note(val) -> str:
 # Sidebar
 # ---------------------------------------------------------------------------
 
-_COMP_ICONS: dict[str, str] = {
-    "Liga":                    "🇪🇸  Liga",
-    "Ligue des Champions":     "⭐  C1",
-    "Coupe du Roi":            "👑  Copa",
-    "Supercoupe d'Espagne":    "🔶  Supercoupe",
-    "Intercontinental":        "🌍  Intercont.",
-    "Amical":                  "🤝  Amical",
+_COMP_LOGOS: dict[str, str] = {
+    "Liga":                 "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/LaLiga_logo_2023.svg/120px-LaLiga_logo_2023.svg.png",
+    "Ligue des Champions":  "https://upload.wikimedia.org/wikipedia/en/thumb/6/67/UEFA_Champions_League_logo.svg/100px-UEFA_Champions_League_logo.svg.png",
+    "Coupe du Roi":         "https://upload.wikimedia.org/wikipedia/en/thumb/9/94/Copa_del_Rey.png/100px-Copa_del_Rey.png",
+    "Supercoupe d'Espagne": "https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Supercopa_de_Espa%C3%B1a_logo.svg/100px-Supercopa_de_Espa%C3%B1a_logo.svg.png",
+    "Intercontinental":     "https://upload.wikimedia.org/wikipedia/en/thumb/5/5a/FIFA_Intercontinental_Cup_Logo.svg/100px-FIFA_Intercontinental_Cup_Logo.svg.png",
+    "Amical":               "",
+}
+_COMP_LABELS: dict[str, str] = {
+    "Liga":                 "Liga",
+    "Ligue des Champions":  "C1",
+    "Coupe du Roi":         "Copa",
+    "Supercoupe d'Espagne": "Supercoupe",
+    "Intercontinental":     "Intercont.",
+    "Amical":               "Amical",
 }
 
-_SRC_OPTIONS = ["jdr", "fotmob"]
-_SRC_LABELS  = {"jdr": "📰  JDR", "fotmob": "⚽  FotMob"}
+
+def _sidebar_toggle_group(
+    options: list[str],
+    logos: dict[str, str],
+    labels: dict[str, str],
+    key: str,
+    height: int = 60,
+) -> list[str]:
+    """Connected rectangular button group rendered as an HTML component."""
+    if key not in st.session_state:
+        st.session_state[key] = list(options)
+
+    sel_set = set(st.session_state.get(key, options))
+    items_js = json.dumps([{
+        "value": v,
+        "label": labels.get(v, v),
+        "logo":  logos.get(v, ""),
+        "active": v in sel_set,
+    } for v in options])
+
+    html_str = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+*{{margin:0;padding:0;box-sizing:border-box}}
+html,body{{background:#060f1c;overflow:hidden;font-family:-apple-system,sans-serif}}
+.grp{{display:flex;width:100%;height:50px;border:1px solid #1e3050;border-radius:3px;overflow:hidden}}
+.btn{{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;padding:4px 3px;background:#0c1624;border:none;border-right:1px solid #1e3050;color:#445566;font-size:0.56rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s,color .15s}}
+.btn:last-child{{border-right:none}}
+.btn:hover{{background:#111e30;color:#8fa0b2}}
+.btn.active{{background:rgba(201,162,39,.1);color:#c9a227;border-right-color:rgba(201,162,39,.25)}}
+.btn img{{height:18px;max-width:40px;object-fit:contain}}
+.lbl{{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
+</style></head><body>
+<div class="grp" id="g"></div>
+<script>
+const items={items_js};
+let sel=items.filter(i=>i.active).map(i=>i.value);
+function render(){{
+  const g=document.getElementById('g');g.innerHTML='';
+  items.forEach(item=>{{
+    const b=document.createElement('button');
+    b.className='btn'+(sel.includes(item.value)?' active':'');
+    if(item.logo){{const img=document.createElement('img');img.src=item.logo;img.onerror=()=>img.remove();b.appendChild(img);}}
+    const s=document.createElement('span');s.className='lbl';s.textContent=item.label;b.appendChild(s);
+    b.onclick=()=>{{
+      sel=sel.includes(item.value)?sel.filter(v=>v!==item.value):[...sel,item.value];
+      render();Streamlit.setComponentValue(sel);
+    }};
+    g.appendChild(b);
+  }});
+}}
+render();
+</script></body></html>"""
+
+    result = components.html(html_str, height=height, scrolling=False)
+    if result is not None:
+        st.session_state[key] = result
+    return st.session_state.get(key, list(options))
 
 
 def render_sidebar(df: pd.DataFrame) -> tuple[list[str], bool, bool]:
@@ -931,37 +974,41 @@ def render_sidebar(df: pd.DataFrame) -> tuple[list[str], bool, bool]:
 
     all_comps = sorted(df["competition"].unique()) if not df.empty else []
 
-    # Pills par compétition
+    # Button group — competitions
     st.sidebar.markdown(
         '<span class="sidebar-section-label">Compétitions</span>',
         unsafe_allow_html=True,
     )
-    selected_comps: list[str] = st.sidebar.pills(
-        label="comps",
-        options=all_comps,
-        selection_mode="multi",
-        default=all_comps,
-        format_func=lambda c: _COMP_ICONS.get(c, c),
-        key="pills_comps",
-        label_visibility="collapsed",
-    ) or []
+    with st.sidebar:
+        selected_comps = _sidebar_toggle_group(
+            options=all_comps,
+            logos=_COMP_LOGOS,
+            labels=_COMP_LABELS,
+            key="toggle_comps",
+        )
 
     st.sidebar.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
 
-    # Pills sources de données
+    # Button group — sources
+    fotmob_svg = (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 20">'
+        '<text y="15" font-family="Arial Black,sans-serif" font-weight="900" '
+        'font-size="13" fill="#01d47e">fotmob</text></svg>'
+    )
+    fotmob_logo = "data:image/svg+xml;base64," + base64.b64encode(fotmob_svg.encode()).decode()
+    jdr_logo = f"data:image/jpeg;base64,{logo_b64}" if logo_b64 else ""
+
     st.sidebar.markdown(
         '<span class="sidebar-section-label">Sources de données</span>',
         unsafe_allow_html=True,
     )
-    selected_sources: list[str] = st.sidebar.pills(
-        label="sources",
-        options=_SRC_OPTIONS,
-        selection_mode="multi",
-        default=_SRC_OPTIONS,
-        format_func=lambda s: _SRC_LABELS[s],
-        key="pills_sources",
-        label_visibility="collapsed",
-    ) or []
+    with st.sidebar:
+        selected_sources = _sidebar_toggle_group(
+            options=["jdr", "fotmob"],
+            logos={"jdr": jdr_logo, "fotmob": fotmob_logo},
+            labels={"jdr": "JDR", "fotmob": "FotMob"},
+            key="toggle_sources",
+        )
 
     show_jdr    = "jdr"    in selected_sources
     show_fotmob = "fotmob" in selected_sources
