@@ -2,10 +2,11 @@
 main.py — Point d'entrée CLI du scraper de notes Real Madrid.
 
 Usage:
-    python main.py                              # Scrape + stats globales
+    python main.py                              # Charge le cache + affiche stats
+    python main.py --refresh                    # Scrape incrémental (nouveaux articles seulement)
+    python main.py --hard-refresh               # Re-scrape intégral (ignore tout le cache)
     python main.py --competition Liga           # Filtre par compétition
     python main.py --joueur "Vinicius Jr"       # Stats d'un joueur
-    python main.py --refresh                    # Re-scrape (ignore le cache)
     python main.py --list-competitions          # Liste les compétitions trouvées
     python main.py --list-joueurs               # Liste tous les joueurs
 """
@@ -51,21 +52,8 @@ logger = logging.getLogger("main")
 # Pipeline principal
 # ---------------------------------------------------------------------------
 
-def run_scrape(refresh: bool = False) -> list:
-    """Lance le scraping complet et retourne les articles parsés."""
-    logger.info("=== Découverte des URLs ===")
-    urls = discover_article_urls(max_pages=20, use_cache=not refresh, refresh=refresh)
-    logger.info("URLs trouvées : %d", len(urls))
-
-    if not urls:
-        logger.warning("Aucune URL trouvée. Vérifiez la connexion ou les filtres de date.")
-        return []
-
-    logger.info("=== Téléchargement des articles ===")
-    html_map = fetch_all_articles(urls, use_cache=not refresh)
-    logger.info("Articles téléchargés : %d", len(html_map))
-
-    logger.info("=== Parsing des notes ===")
+def _parse_and_log(html_map: dict) -> tuple[list, int]:
+    """Parse un dict url->html, retourne (articles ArticleData, nb ignorés)."""
     articles = []
     skipped = 0
     for url, html in html_map.items():
@@ -75,43 +63,92 @@ def run_scrape(refresh: bool = False) -> list:
             articles.append(article)
             logger.info(
                 "OK  [%s] %s — %d joueurs notés",
-                article.date,
-                article.competition,
-                len(article.players),
+                article.date, article.competition, len(article.players),
             )
         else:
             skipped += 1
             logger.debug("Skipped (no ratings): %s", url)
+    return articles, skipped
 
+
+def run_scrape(hard: bool = False) -> list:
+    """Scraping intégral : re-télécharge tout depuis le site (--hard-refresh)."""
+    logger.info("=== Découverte des URLs ===")
+    urls = discover_article_urls(max_pages=20, use_cache=False, refresh=True)
+    logger.info("URLs trouvées : %d", len(urls))
+
+    if not urls:
+        logger.warning("Aucune URL trouvée. Vérifiez la connexion ou les filtres de date.")
+        return []
+
+    logger.info("=== Téléchargement des articles ===")
+    html_map = fetch_all_articles(urls, use_cache=False)
+    logger.info("Articles téléchargés : %d", len(html_map))
+
+    logger.info("=== Parsing des notes ===")
+    articles, skipped = _parse_and_log(html_map)
     logger.info("Articles avec notes : %d | Ignorés : %d", len(articles), skipped)
 
-    # Sauvegarde JDR
     save_articles(articles)
 
-    # Scraping FotMob (sauvegarde lui-même dans output/fotmob_data.json)
     try:
-        scrape_fotmob(refresh=refresh)
+        scrape_fotmob(refresh=True)
     except Exception as e:
         logger.error("FotMob scraping failed: %s", e)
 
-    # Retourne des dicts (load_articles) pour compatibilité avec compute_stats()
     articles_dicts = load_articles()
-    stats = compute_stats(articles_dicts)
-    save_stats(stats)
-
+    save_stats(compute_stats(articles_dicts))
     return articles_dicts
 
 
-def load_or_scrape(refresh: bool = False) -> list:
-    """Charge les données existantes ou lance un scraping si nécessaire."""
-    if not refresh:
-        articles = load_articles()
-        if articles:
-            logger.info("Données chargées depuis le cache (%d articles)", len(articles))
-            return articles
-        logger.info("Aucune donnée en cache, lancement du scraping...")
+def run_scrape_incremental() -> list:
+    """Scraping incrémental : découvre les nouvelles URLs et ne traite que celles-ci."""
+    logger.info("=== Découverte des URLs (incrémental) ===")
+    urls = discover_article_urls(max_pages=20, use_cache=False, refresh=False)
+    logger.info("URLs trouvées : %d", len(urls))
 
-    return run_scrape(refresh=refresh)
+    existing_articles = load_articles()
+    existing_urls = {a["url"] for a in existing_articles}
+
+    new_urls = [u for u in urls if u not in existing_urls]
+    logger.info("Nouveaux articles : %d (déjà connus : %d)", len(new_urls), len(existing_urls))
+
+    if new_urls:
+        logger.info("=== Téléchargement des nouveaux articles ===")
+        html_map = fetch_all_articles(new_urls, use_cache=True)
+
+        logger.info("=== Parsing des notes ===")
+        new_articles, skipped = _parse_and_log(html_map)
+        logger.info("Nouveaux articles avec notes : %d | Ignorés : %d", len(new_articles), skipped)
+
+        # Merge : existing dicts + new ArticleData objects (save_articles handles both)
+        save_articles(existing_articles + new_articles)
+    else:
+        logger.info("Aucun nouvel article — mise à jour FotMob + stats uniquement.")
+
+    try:
+        scrape_fotmob(refresh=False)
+    except Exception as e:
+        logger.error("FotMob scraping failed: %s", e)
+
+    articles_dicts = load_articles()
+    save_stats(compute_stats(articles_dicts))
+    return articles_dicts
+
+
+def load_or_scrape(refresh: bool = False, hard_refresh: bool = False) -> list:
+    """Charge les données existantes ou lance un scraping selon le mode."""
+    if hard_refresh:
+        return run_scrape(hard=True)
+    if refresh:
+        return run_scrape_incremental()
+
+    articles = load_articles()
+    if articles:
+        logger.info("Données chargées depuis le cache (%d articles)", len(articles))
+        return articles
+    logger.info("Aucune donnée en cache, lancement du scraping incrémental...")
+    return run_scrape_incremental()
 
 
 # ---------------------------------------------------------------------------
@@ -127,7 +164,13 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--refresh",
         action="store_true",
-        help="Ignore le cache et re-scrape tout depuis le site.",
+        help="Scraping incrémental : découvre les nouveaux articles et les ajoute aux données existantes.",
+    )
+    p.add_argument(
+        "--hard-refresh",
+        action="store_true",
+        dest="hard_refresh",
+        help="Re-scrape intégral : ignore tout le cache et retélécharge tous les articles.",
     )
     p.add_argument(
         "--competition",
@@ -184,10 +227,10 @@ def main() -> int:
         logging.getLogger().setLevel(logging.DEBUG)
 
     # Chargement / scraping
-    articles = load_or_scrape(refresh=args.refresh)
+    articles = load_or_scrape(refresh=args.refresh, hard_refresh=args.hard_refresh)
 
     if not articles:
-        print("Aucun article trouvé. Lancez avec --refresh pour re-scraper.")
+        print("Aucun article trouvé. Lancez avec --refresh pour scraper les données.")
         return 1
 
     if args.scrape_only:

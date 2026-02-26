@@ -21,8 +21,10 @@ cache/          — Pages HTML cachées (gitignorées)
 ```bash
 # Toujours utiliser -X utf8 sur Windows (noms accentués)
 python -X utf8 main.py                              # Charger cache ou scraper + afficher stats
-python -X utf8 main.py --refresh                    # Re-scraper depuis le site (ignore le cache)
-python -X utf8 main.py --refresh --scrape-only      # Re-scraper sans afficher les stats (rebuild données)
+python -X utf8 main.py --refresh                    # Scraping incrémental (nouveaux articles seulement)
+python -X utf8 main.py --refresh --scrape-only      # Scraping incrémental sans afficher les stats
+python -X utf8 main.py --hard-refresh               # Re-scraper intégral (ignore tout le cache)
+python -X utf8 main.py --hard-refresh --scrape-only # Re-scraper intégral sans afficher les stats
 python -X utf8 main.py --competition Liga           # Filtrer par compétition
 python -X utf8 main.py --joueur "Vinicius Jr"       # Détail d'un joueur
 python -X utf8 main.py --min-matchs 5               # Joueurs avec ≥ 5 matchs
@@ -85,7 +87,8 @@ Toutes déjà installées (Python 3.14, Windows). Voir `requirements.txt`.
   Toujours utiliser le nom complet comme clé, jamais le seul nom de famille (risque de collision).
   Ex. correct : `"Fran Garcia": "Fran García"` / Ex. à éviter : `"Garcia": "…"`.
 - **Rebuild des données** : après toute modification de `notes_parser.py`, supprimer `output/data.json`
-  et relancer `python -X utf8 main.py --refresh --scrape-only` pour re-parser tous les articles.
-  Sans `--refresh`, `main.py` charge directement `data.json` sans re-parser les HTML cachés.
-- **Cache des URLs** : `--refresh` re-découvre aussi la liste des URLs depuis le site. Si un article
-  récent est absent, vérifier que le cache des URLs n'est pas périmé (`cache/urls_*.json`).
+  et relancer `python -X utf8 main.py --hard-refresh --scrape-only` pour re-parser tous les articles.
+  Sans flag, `main.py` charge directement `data.json` sans re-parser les HTML cachés.
+- **Mise à jour rapide** : `--refresh` est incrémental — ne scrape que les nouveaux articles non présents
+  dans `data.json`. Rapide (quelques secondes si peu de nouveautés).
+- **Cache des URLs** : `--refresh` et `--hard-refresh` re-découvrent la liste des URLs depuis le site.
