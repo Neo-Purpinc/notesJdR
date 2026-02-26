@@ -952,17 +952,15 @@ def _sidebar_toggle_group(
     html_str = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><style>
 *{{margin:0;padding:0;box-sizing:border-box}}
 html,body{{background:#060f1c;overflow:hidden;font-family:-apple-system,sans-serif}}
-.grp{{display:flex;width:100%;height:64px;border:1px solid #1e3050;border-radius:3px;overflow:hidden}}
+.grp{{display:flex;width:100%;height:64px;border:1px solid #ccc;border-radius:3px;overflow:hidden}}
 .btn{{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;
-  padding:5px 4px;background:#0c1624;border:none;border-right:1px solid #1e3050;
-  color:#3a4f64;font-size:0.55rem;letter-spacing:.06em;text-transform:uppercase;
+  padding:5px 4px;background:#fff;border:none;border-right:1px solid #e0e0e0;
+  color:#888;font-size:0.55rem;letter-spacing:.06em;text-transform:uppercase;
   cursor:pointer;transition:background .15s,color .15s}}
 .btn:last-child{{border-right:none}}
-.btn:hover{{background:#101e30}}
-.btn.active{{background:#111e30;color:#c9a227;border-right-color:rgba(201,162,39,.3)}}
-.icon-wrap{{display:flex;align-items:center;justify-content:center;
-  border-radius:4px;padding:3px;transition:background .15s}}
-.btn.active .icon-wrap{{background:#fff}}
+.btn:hover{{background:#f7f7f7}}
+.btn.active{{color:#c9a227}}
+.icon-wrap{{display:flex;align-items:center;justify-content:center;border-radius:4px;padding:3px}}
 .btn img{{height:36px;max-width:56px;object-fit:contain;
   filter:grayscale(100%) opacity(35%);transition:filter .15s}}
 .btn.active img{{filter:none}}
