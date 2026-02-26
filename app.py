@@ -118,9 +118,7 @@ body,
 [data-testid="stToolbarActions"] { visibility: hidden !important; }
 /* Force le bouton sidebar toujours visible (toutes versions Streamlit) */
 [data-testid="stSidebarCollapsedControl"],
-[data-testid="stSidebarCollapseButton"],
 [data-testid="stSidebarCollapsedControl"] button,
-[data-testid="stSidebarCollapseButton"] button,
 [data-testid="collapsedControl"] {
     display: block !important;
     visibility: visible !important;
@@ -819,7 +817,7 @@ def color_note(val) -> str:
 # Sidebar
 # ---------------------------------------------------------------------------
 
-def render_sidebar(df: pd.DataFrame) -> tuple[list[str], list[str]]:
+def render_sidebar(df: pd.DataFrame) -> tuple[list[str], bool, bool]:
     logo_b64 = _load_logo_b64()
     logo_html = (
         f'<img src="data:image/jpeg;base64,{logo_b64}" class="sidebar-logo" alt="JDR">'
@@ -837,7 +835,6 @@ def render_sidebar(df: pd.DataFrame) -> tuple[list[str], list[str]]:
 """, unsafe_allow_html=True)
 
     all_comps = sorted(df["competition"].unique()) if not df.empty else []
-    all_players = sorted(df["joueur"].unique()) if not df.empty else []
 
     # Checkboxes par compétition
     st.sidebar.markdown(
@@ -851,14 +848,15 @@ def render_sidebar(df: pd.DataFrame) -> tuple[list[str], list[str]]:
 
     st.sidebar.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
 
-    selected_players = st.sidebar.multiselect(
-        "Joueurs",
-        options=all_players,
-        default=[],
-        placeholder="Tous les joueurs",
+    # Sources de données
+    st.sidebar.markdown(
+        '<span class="sidebar-section-label">Sources de données</span>',
+        unsafe_allow_html=True,
     )
+    show_jdr    = st.sidebar.checkbox("JDR",    value=True, key="src_jdr")
+    show_fotmob = st.sidebar.checkbox("FotMob", value=True, key="src_fotmob")
 
-    return selected_comps, selected_players
+    return selected_comps, show_jdr, show_fotmob
 
 
 # ---------------------------------------------------------------------------
@@ -920,7 +918,7 @@ def tab_tableau(stats: list[dict], selected_comps: list[str], selected_players: 
 # Onglet 2 — Évolution temporelle
 # ---------------------------------------------------------------------------
 
-def tab_evolution(matches_df: pd.DataFrame, selected_players: list[str], selected_comps: list[str]) -> None:
+def tab_evolution(matches_df: pd.DataFrame, selected_players: list[str], selected_comps: list[str], show_jdr: bool = True, show_fotmob: bool = True) -> None:
     st.header("Évolution temporelle")
 
     if matches_df.empty:
@@ -950,18 +948,14 @@ def tab_evolution(matches_df: pd.DataFrame, selected_players: list[str], selecte
         key="evo_players",
     )
 
-    # Source + rolling controls
-    sc1, sc2, sc3, sc4 = st.columns(4)
-    show_combined = sc1.checkbox("Combiné", value=True, key="evo_combined")
-    show_jdr     = sc2.checkbox("JDR",     value=True, key="evo_jdr")
-    show_fotmob  = sc3.checkbox("FotMob",  value=True, key="evo_fotmob")
-    show_rolling = sc4.checkbox("Moy. glissante (5M)", value=False, key="evo_rolling")
+    show_combined = show_jdr and show_fotmob
+    show_rolling = st.checkbox("Moy. glissante (5M)", value=False, key="evo_rolling")
 
     if not players_choice:
         st.info("Sélectionnez au moins un joueur.")
         return
     if not (show_combined or show_jdr or show_fotmob):
-        st.info("Cochez au moins une source.")
+        st.info("Activez au moins une source dans la barre latérale.")
         return
 
     # (col, label, dash, marker_symbol, alpha_line)
@@ -1041,7 +1035,7 @@ def tab_evolution(matches_df: pd.DataFrame, selected_players: list[str], selecte
 # Onglet 3 — Comparaison joueurs
 # ---------------------------------------------------------------------------
 
-def tab_comparaison(stats: list[dict], selected_players: list[str], selected_comps: list[str]) -> None:
+def tab_comparaison(stats: list[dict], selected_players: list[str], selected_comps: list[str], show_jdr: bool = True, show_fotmob: bool = True) -> None:
     st.header("Comparaison joueurs")
 
     if not stats:
@@ -1062,14 +1056,16 @@ def tab_comparaison(stats: list[dict], selected_players: list[str], selected_com
         st.info("Sélectionnez au moins un joueur.")
         return
 
-    # Metric selector
-    metric_label = st.radio(
-        "Source de notes",
-        options=["Combiné", "JDR", "FotMob"],
-        horizontal=True,
-        key="comp_metric",
-    )
-    metric_key = {"Combiné": "note", "JDR": "jdr_note", "FotMob": "fotmob_note"}[metric_label]
+    # Metric derived from sidebar source selection
+    if show_jdr and show_fotmob:
+        metric_label, metric_key = "Combiné", "note"
+    elif show_jdr:
+        metric_label, metric_key = "JDR", "jdr_note"
+    elif show_fotmob:
+        metric_label, metric_key = "FotMob", "fotmob_note"
+    else:
+        st.info("Activez au moins une source dans la barre latérale.")
+        return
 
     comps_in_filter = set(selected_comps)
     all_comps_data: set[str] = set()
@@ -1191,7 +1187,7 @@ def tab_comparaison(stats: list[dict], selected_players: list[str], selected_com
 # Onglet 4 — Détail par match
 # ---------------------------------------------------------------------------
 
-def tab_detail(matches_df: pd.DataFrame, selected_players: list[str], selected_comps: list[str]) -> None:
+def tab_detail(matches_df: pd.DataFrame, selected_players: list[str], selected_comps: list[str], show_jdr: bool = True, show_fotmob: bool = True) -> None:
     st.header("Détail par match")
 
     if matches_df.empty:
@@ -1237,11 +1233,7 @@ def tab_detail(matches_df: pd.DataFrame, selected_players: list[str], selected_c
         (base["competition"] == sel["competition"])
     ].copy()
 
-    # ── Ligne 2 : sources + note minimale ────────────────────────────────
-    sc1, sc2, sc3 = st.columns([1, 1, 2])
-    show_jdr    = sc1.checkbox("JDR",    value=True, key="detail_jdr")
-    show_fotmob = sc2.checkbox("FotMob", value=True, key="detail_fotmob")
-
+    # ── Ligne 2 : note minimale ───────────────────────────────────────────
     if show_jdr and show_fotmob:
         min_col, min_label = "note", "Combiné"
     elif show_jdr:
@@ -1249,7 +1241,7 @@ def tab_detail(matches_df: pd.DataFrame, selected_players: list[str], selected_c
     else:
         min_col, min_label = "fotmob_note", "FotMob"
 
-    note_min = sc3.slider(f"Note minimale ({min_label})", 0, 10, 0, key="detail_note_min")
+    note_min = st.slider(f"Note minimale ({min_label})", 0, 10, 0, key="detail_note_min")
 
     # Apply note-min filter on the relevant column
     df_match = df_match[
@@ -1542,7 +1534,7 @@ def main() -> None:
         return
 
     matches_df = stats_to_matches_df(stats)
-    selected_comps, selected_players = render_sidebar(matches_df)
+    selected_comps, show_jdr, show_fotmob = render_sidebar(matches_df)
 
     # Hero
     st.markdown("""
@@ -1598,16 +1590,16 @@ def main() -> None:
     mdf_filtered = matches_df[matches_df["competition"].isin(selected_comps)] if selected_comps else matches_df
 
     with tab1:
-        tab_tableau(stats, selected_comps, selected_players)
+        tab_tableau(stats, selected_comps, [])
 
     with tab2:
-        tab_evolution(mdf_filtered, selected_players, selected_comps)
+        tab_evolution(mdf_filtered, [], selected_comps, show_jdr, show_fotmob)
 
     with tab3:
-        tab_comparaison(stats, selected_players, selected_comps)
+        tab_comparaison(stats, [], selected_comps, show_jdr, show_fotmob)
 
     with tab4:
-        tab_detail(mdf_filtered, selected_players, selected_comps)
+        tab_detail(mdf_filtered, [], selected_comps, show_jdr, show_fotmob)
 
     with tab5:
         tab_profil_joueur(stats)
