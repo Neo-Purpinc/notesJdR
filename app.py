@@ -729,12 +729,16 @@ def stats_to_df(stats: list[dict]) -> pd.DataFrame:
         row = {
             "Joueur": s["player_name"],
             "Moy. globale": s["moyenne_globale"],
+            "Moy. JDR": s.get("moyenne_jdr") or None,
+            "Moy. FotMob": s.get("moyenne_fotmob") or None,
             "Matchs notés": s["nb_matchs"],
             "Non notés": s.get("nb_matchs_non_notes", 0),
             "Total": s.get("nb_matchs_total", s["nb_matchs"]),
             "Note min": s.get("note_min", "-"),
             "Note max": s.get("note_max", "-"),
             "Écart-type": s.get("ecart_type", 0.0),
+            "Buts": s.get("total_goals", 0),
+            "Passes D.": s.get("total_assists", 0),
         }
         for comp in all_comps_sorted:
             if comp in s.get("par_competition", {}):
@@ -749,6 +753,32 @@ def stats_to_df(stats: list[dict]) -> pd.DataFrame:
         rows.append(row)
 
     return pd.DataFrame(rows)
+
+
+def stats_to_matches_df(stats: list[dict]) -> pd.DataFrame:
+    """Flat DataFrame from stats detail_matchs — includes JDR, FotMob and combined notes."""
+    rows = []
+    for s in stats:
+        for m in s.get("detail_matchs", []):
+            rows.append({
+                "date": pd.to_datetime(m["date"]),
+                "adversaire": m.get("opponent") or "?",
+                "competition": m.get("competition", "Inconnue"),
+                "joueur": s["player_name"],
+                "note": m.get("note"),
+                "jdr_note": m.get("jdr_note"),
+                "fotmob_note": m.get("fotmob_note"),
+                "goals": m.get("goals", 0) or 0,
+                "assists": m.get("assists", 0) or 0,
+                "url": m.get("url", ""),
+                "titre": m.get("title", ""),
+            })
+    df = pd.DataFrame(rows)
+    if not df.empty:
+        df = df.sort_values("date")
+        for col in ("note", "jdr_note", "fotmob_note"):
+            df[col] = pd.to_numeric(df[col], errors="coerce")
+    return df
 
 
 # ---------------------------------------------------------------------------
@@ -862,17 +892,17 @@ def tab_tableau(stats: list[dict], selected_comps: list[str], selected_players: 
 # Onglet 2 — Évolution temporelle
 # ---------------------------------------------------------------------------
 
-def tab_evolution(df: pd.DataFrame, selected_players: list[str], selected_comps: list[str]) -> None:
+def tab_evolution(matches_df: pd.DataFrame, selected_players: list[str], selected_comps: list[str]) -> None:
     st.header("Évolution temporelle")
 
-    if df.empty:
+    if matches_df.empty:
         st.info("Aucune donnée disponible.")
         return
 
-    mask = df["competition"].isin(selected_comps)
+    mask = matches_df["competition"].isin(selected_comps)
     if selected_players:
-        mask &= df["joueur"].isin(selected_players)
-    df_f = df[mask].copy()
+        mask &= matches_df["joueur"].isin(selected_players)
+    df_f = matches_df[mask].copy()
 
     if df_f.empty:
         st.warning("Aucune donnée pour les filtres sélectionnés.")
@@ -892,11 +922,26 @@ def tab_evolution(df: pd.DataFrame, selected_players: list[str], selected_comps:
         key="evo_players",
     )
 
-    show_rolling = st.checkbox("Afficher la moyenne glissante (5 matchs)", value=True)
+    # Source + rolling controls
+    sc1, sc2, sc3, sc4 = st.columns(4)
+    show_combined = sc1.checkbox("Combiné", value=True, key="evo_combined")
+    show_jdr     = sc2.checkbox("JDR",     value=True, key="evo_jdr")
+    show_fotmob  = sc3.checkbox("FotMob",  value=True, key="evo_fotmob")
+    show_rolling = sc4.checkbox("Moy. glissante (5M)", value=False, key="evo_rolling")
 
     if not players_choice:
         st.info("Sélectionnez au moins un joueur.")
         return
+    if not (show_combined or show_jdr or show_fotmob):
+        st.info("Cochez au moins une source.")
+        return
+
+    # (col, label, dash, marker_symbol, alpha_line)
+    SERIES = [
+        ("note",       "Combiné", "solid",  "circle",  1.0, show_combined),
+        ("jdr_note",   "JDR",     "dash",   "square",  0.85, show_jdr),
+        ("fotmob_note","FotMob",  "dot",    "diamond", 0.85, show_fotmob),
+    ]
 
     df_plot = df_f[df_f["joueur"].isin(players_choice)].copy()
     fig = go.Figure()
@@ -905,50 +950,58 @@ def tab_evolution(df: pd.DataFrame, selected_players: list[str], selected_comps:
         pdata = df_plot[df_plot["joueur"] == player].sort_values("date")
         if pdata.empty:
             continue
-
         color = MADRID_PALETTE[idx % len(MADRID_PALETTE)]
 
-        fig.add_trace(go.Scatter(
-            x=pdata["date"],
-            y=pdata["note"],
-            mode="lines+markers",
-            name=player,
-            line=dict(color=color, width=2),
-            marker=dict(color=color, size=7, line=dict(color=_hex_rgba(color, 0.4), width=3)),
-            hovertemplate=(
-                f"<b>{player}</b><br>"
-                "Date: %{x|%d/%m/%Y}<br>"
-                "Note: <b>%{y}/10</b><br>"
-                "Adversaire: %{customdata[0]}<br>"
-                "Compétition: %{customdata[1]}"
-                "<extra></extra>"
-            ),
-            customdata=pdata[["adversaire", "competition"]].values,
-        ))
-
-        if show_rolling and len(pdata) >= 3:
-            rolling = pdata["note"].rolling(window=5, min_periods=2).mean()
+        for col, label, dash, sym, alpha, show in SERIES:
+            if not show:
+                continue
+            y_vals = pdata[col]
+            if y_vals.isna().all():
+                continue
+            is_main = col == "note"
+            lcolor = color if is_main else _hex_rgba(color, 0.65)
+            trace_name = player if is_main else f"{player} · {label}"
             fig.add_trace(go.Scatter(
                 x=pdata["date"],
-                y=rolling,
+                y=y_vals,
+                mode="lines+markers" if is_main else "markers",
+                name=trace_name,
+                line=dict(color=lcolor, width=2, dash=dash) if is_main else dict(color=lcolor, width=1),
+                marker=dict(color=lcolor, size=7 if is_main else 6, symbol=sym,
+                            line=dict(color=_hex_rgba(color, 0.35), width=2)),
+                opacity=alpha,
+                connectgaps=True,
+                hovertemplate=(
+                    f"<b>{player}</b> ({label})<br>"
+                    "Date: %{x|%d/%m/%Y}<br>"
+                    "Note: <b>%{y:.1f}/10</b><br>"
+                    "Adversaire: %{customdata[0]}<br>"
+                    "Compétition: %{customdata[1]}"
+                    "<extra></extra>"
+                ),
+                customdata=pdata[["adversaire", "competition"]].values,
+            ))
+
+        if show_rolling and show_combined and pdata["note"].notna().sum() >= 3:
+            rolling = pdata["note"].rolling(window=5, min_periods=2).mean()
+            fig.add_trace(go.Scatter(
+                x=pdata["date"], y=rolling,
                 mode="lines",
                 name=f"{player} (moy. 5)",
                 line=dict(dash="dot", width=1.5, color=color),
-                opacity=0.55,
-                hoverinfo="skip",
+                opacity=0.5, hoverinfo="skip",
             ))
 
     fig.update_layout(
         yaxis=dict(range=[0, 10.5], dtick=1),
         hovermode="x unified",
-        height=500,
+        height=520,
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
         hoverlabel=dict(bgcolor="#0c1624", bordercolor="#1e3050", font_family="DM Mono, monospace"),
     )
     apply_chart_theme(fig, "Évolution des notes")
     fig.update_xaxes(title_text="Date", title_font=dict(color="#445566", size=11))
     fig.update_yaxes(title_text="Note /10", title_font=dict(color="#445566", size=11))
-
     st.plotly_chart(fig, use_container_width=True)
 
 
@@ -977,18 +1030,37 @@ def tab_comparaison(stats: list[dict], selected_players: list[str], selected_com
         st.info("Sélectionnez au moins un joueur.")
         return
 
+    # Metric selector
+    metric_label = st.radio(
+        "Source de notes",
+        options=["Combiné", "JDR", "FotMob"],
+        horizontal=True,
+        key="comp_metric",
+    )
+    metric_key = {"Combiné": "note", "JDR": "jdr_note", "FotMob": "fotmob_note"}[metric_label]
+
     comps_in_filter = set(selected_comps)
     all_comps_data: set[str] = set()
     for s in stats:
         if s["player_name"] in players_choice:
-            for comp in s.get("par_competition", {}):
-                if comp in comps_in_filter:
+            for m in s.get("detail_matchs", []):
+                comp = m.get("competition", "")
+                if comp in comps_in_filter and m.get(metric_key) is not None:
                     all_comps_data.add(comp)
     comps_sorted = sorted(all_comps_data)
 
     if not comps_sorted:
-        st.warning("Aucune compétition trouvée pour ces joueurs.")
+        st.warning("Aucune compétition trouvée pour ces joueurs avec la source sélectionnée.")
         return
+
+    # Helper: compute per-player, per-comp average for the chosen metric
+    def _avg_per_comp(player_stats: dict, comp: str) -> tuple[float | None, int]:
+        vals = [
+            float(m[metric_key])
+            for m in player_stats.get("detail_matchs", [])
+            if m.get("competition") == comp and m.get(metric_key) is not None
+        ]
+        return (round(sum(vals) / len(vals), 2) if vals else None, len(vals))
 
     # Palette stable par joueur
     player_colors = {p: MADRID_PALETTE[i % len(MADRID_PALETTE)] for i, p in enumerate(players_choice)}
@@ -1002,13 +1074,13 @@ def tab_comparaison(stats: list[dict], selected_players: list[str], selected_com
             if s["player_name"] not in players_choice:
                 continue
             for comp in comps_sorted:
-                cd = s.get("par_competition", {}).get(comp)
-                if cd:
+                avg, n = _avg_per_comp(s, comp)
+                if avg is not None:
                     bar_data.append({
                         "Joueur": s["player_name"],
                         "Compétition": comp,
-                        "Moyenne": cd["moyenne"],
-                        "Matchs": cd["nb_matchs"],
+                        "Moyenne": avg,
+                        "Matchs": n,
                     })
 
         if bar_data:
@@ -1026,11 +1098,10 @@ def tab_comparaison(stats: list[dict], selected_players: list[str], selected_com
             )
             fig_bar.update_layout(
                 legend=dict(orientation="h", yanchor="top", y=-0.22, xanchor="center", x=0.5),
-                bargap=0.2,
-                bargroupgap=0.05,
+                bargap=0.2, bargroupgap=0.05,
                 hoverlabel=dict(bgcolor="#0c1624", bordercolor="#1e3050", font_family="DM Mono, monospace"),
             )
-            apply_chart_theme(fig_bar, "Moyennes par compétition")
+            apply_chart_theme(fig_bar, f"Moyennes par compétition · {metric_label}")
             fig_bar.update_layout(margin=dict(b=72))
             st.plotly_chart(fig_bar, use_container_width=True)
         else:
@@ -1044,42 +1115,33 @@ def tab_comparaison(stats: list[dict], selected_players: list[str], selected_com
         for s in stats:
             if s["player_name"] not in players_choice:
                 continue
-
             color = player_colors[s["player_name"]]
             values = []
             for comp in comps_sorted:
-                cd = s.get("par_competition", {}).get(comp)
-                values.append(cd["moyenne"] if cd else 0)
-
+                avg, _ = _avg_per_comp(s, comp)
+                values.append(avg if avg is not None else 0)
             regularite = max(0, 10 - s.get("ecart_type", 0) * 2)
             values.append(regularite)
             values_closed = values + [values[0]]
             cats_closed = radar_cats + [radar_cats[0]]
 
             fig_radar.add_trace(go.Scatterpolar(
-                r=values_closed,
-                theta=cats_closed,
-                fill="toself",
-                name=s["player_name"],
+                r=values_closed, theta=cats_closed,
+                fill="toself", name=s["player_name"],
                 fillcolor=_hex_rgba(color, 0.1),
-                line=dict(color=color, width=2),
-                opacity=0.9,
+                line=dict(color=color, width=2), opacity=0.9,
             ))
 
         fig_radar.update_layout(
             polar=dict(
                 bgcolor="rgba(0,0,0,0)",
                 radialaxis=dict(
-                    visible=True,
-                    range=[0, 10],
-                    gridcolor="#152338",
-                    linecolor="#1e3050",
-                    tickfont=dict(color="#445566", family="DM Mono", size=9),
-                    tickcolor="#445566",
+                    visible=True, range=[0, 10],
+                    gridcolor="#152338", linecolor="#1e3050",
+                    tickfont=dict(color="#445566", family="DM Mono", size=9), tickcolor="#445566",
                 ),
                 angularaxis=dict(
-                    gridcolor="#152338",
-                    linecolor="#1e3050",
+                    gridcolor="#152338", linecolor="#1e3050",
                     tickfont=dict(color="#8fa0b2", family="DM Mono", size=10),
                 ),
             ),
@@ -1088,7 +1150,7 @@ def tab_comparaison(stats: list[dict], selected_players: list[str], selected_com
             height=440,
             hoverlabel=dict(bgcolor="#0c1624", bordercolor="#1e3050", font_family="DM Mono, monospace"),
         )
-        apply_chart_theme(fig_radar, "Profil multi-compétition")
+        apply_chart_theme(fig_radar, f"Profil multi-compétition · {metric_label}")
         fig_radar.update_layout(margin=dict(b=72))
         st.plotly_chart(fig_radar, use_container_width=True)
 
@@ -1097,17 +1159,17 @@ def tab_comparaison(stats: list[dict], selected_players: list[str], selected_com
 # Onglet 4 — Détail par match
 # ---------------------------------------------------------------------------
 
-def tab_detail(df: pd.DataFrame, selected_players: list[str], selected_comps: list[str]) -> None:
+def tab_detail(matches_df: pd.DataFrame, selected_players: list[str], selected_comps: list[str]) -> None:
     st.header("Détail par match")
 
-    if df.empty:
+    if matches_df.empty:
         st.info("Aucune donnée disponible.")
         return
 
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        all_players = sorted(df["joueur"].unique())
+        all_players = sorted(matches_df["joueur"].unique())
         player_filter = st.selectbox(
             "Joueur",
             options=["Tous"] + all_players,
@@ -1118,22 +1180,22 @@ def tab_detail(df: pd.DataFrame, selected_players: list[str], selected_comps: li
     with col2:
         comp_filter = st.selectbox(
             "Compétition",
-            options=["Toutes"] + sorted(df["competition"].unique()),
+            options=["Toutes"] + sorted(matches_df["competition"].unique()),
             index=0,
             key="detail_comp",
         )
 
     with col3:
-        note_min = st.slider("Note minimale", 0, 10, 0, key="detail_note_min")
+        note_min = st.slider("Note minimale (Combiné)", 0, 10, 0, key="detail_note_min")
 
-    mask = df["competition"].isin(selected_comps)
+    mask = matches_df["competition"].isin(selected_comps)
     if player_filter != "Tous":
-        mask &= df["joueur"] == player_filter
+        mask &= matches_df["joueur"] == player_filter
     if comp_filter != "Toutes":
-        mask &= df["competition"] == comp_filter
-    mask &= (df["note"] >= note_min) | df["note"].isna()
+        mask &= matches_df["competition"] == comp_filter
+    mask &= (matches_df["note"] >= note_min) | matches_df["note"].isna()
 
-    df_f = df[mask].copy()
+    df_f = matches_df[mask].copy()
 
     if df_f.empty:
         st.warning("Aucun résultat pour ces filtres.")
@@ -1141,22 +1203,26 @@ def tab_detail(df: pd.DataFrame, selected_players: list[str], selected_comps: li
 
     df_f["Date"] = df_f["date"].dt.strftime("%d/%m/%Y")
 
-    display_cols = ["Date", "joueur", "adversaire", "competition", "note"]
-    rename_map = {
-        "joueur": "Joueur",
-        "adversaire": "Adversaire",
-        "competition": "Compétition",
-        "note": "Note",
-    }
-
-    df_display = df_f[display_cols].rename(columns=rename_map).sort_values(
-        "Date", ascending=False
-    ).reset_index(drop=True)
+    df_display = df_f[["Date", "joueur", "adversaire", "competition", "jdr_note", "fotmob_note", "note"]].rename(
+        columns={
+            "joueur": "Joueur",
+            "adversaire": "Adversaire",
+            "competition": "Compétition",
+            "jdr_note": "JDR",
+            "fotmob_note": "FotMob",
+            "note": "Combiné",
+        }
+    ).sort_values("Date", ascending=False).reset_index(drop=True)
 
     st.caption(f"{len(df_display)} lignes")
 
-    styled = df_display.style.applymap(color_note, subset=["Note"]).format(
-        {"Note": lambda x: "—" if pd.isna(x) else f"{x:.0f}"}
+    styled = df_display.style.applymap(color_note, subset=["JDR", "FotMob", "Combiné"]).format(
+        {
+            "JDR":     lambda x: "—" if pd.isna(x) else f"{x:.0f}",
+            "FotMob":  lambda x: "—" if pd.isna(x) else f"{x:.1f}",
+            "Combiné": lambda x: "—" if pd.isna(x) else f"{x:.2f}",
+        },
+        na_rep="—",
     )
     st.dataframe(styled, use_container_width=True, height=600)
 
@@ -1164,17 +1230,17 @@ def tab_detail(df: pd.DataFrame, selected_players: list[str], selected_comps: li
     if player_filter != "Tous" and not df_f.empty:
         st.markdown("---")
         st.subheader(f"Résumé — {player_filter}")
-        rated_f = df_f[df_f["note"].notna()]
-        non_noted_count = int(df_f["note"].isna().sum())
-        mc1, mc2, mc3, mc4, mc5 = st.columns(5)
+        rated_f  = df_f[df_f["note"].notna()]
+        jdr_f    = df_f[df_f["jdr_note"].notna()]
+        fm_f     = df_f[df_f["fotmob_note"].notna()]
+        non_noted = int(df_f["note"].isna().sum())
+        mc1, mc2, mc3, mc4, mc5, mc6 = st.columns(6)
         mc1.metric("Matchs notés", len(rated_f))
-        mc2.metric("Non notés", non_noted_count)
-        mc3.metric("Total apparitions", len(df_f))
-        mc4.metric("Moyenne", f"{rated_f['note'].mean():.2f}/10" if not rated_f.empty else "—")
-        mc5.metric(
-            "Max / Min",
-            f"{int(rated_f['note'].max())} / {int(rated_f['note'].min())}" if not rated_f.empty else "—",
-        )
+        mc2.metric("Non notés", non_noted)
+        mc3.metric("Total", len(df_f))
+        mc4.metric("Moy. Combiné", f"{rated_f['note'].mean():.2f}" if not rated_f.empty else "—")
+        mc5.metric("Moy. JDR",    f"{jdr_f['jdr_note'].mean():.2f}" if not jdr_f.empty else "—")
+        mc6.metric("Moy. FotMob", f"{fm_f['fotmob_note'].mean():.2f}" if not fm_f.empty else "—")
 
 
 # ---------------------------------------------------------------------------
@@ -1310,33 +1376,40 @@ def tab_profil_joueur(stats: list[dict]) -> None:
         fig.update_yaxes(title_text="Note /10", title_font=dict(color="#445566", size=11))
         st.plotly_chart(fig, use_container_width=True)
 
-    # ── Par compétition (barres) ──────────────────────────────────────────
-    par_comp = player_data.get("par_competition", {})
-    if par_comp:
-        comp_names = sorted(par_comp.keys())
-        moyennes = [par_comp[c]["moyenne"] for c in comp_names]
-        nb_matchs = [par_comp[c]["nb_matchs"] for c in comp_names]
-
-        fig_bar = go.Figure(go.Bar(
-            x=comp_names,
-            y=moyennes,
-            text=[f"{m:.2f} ({n}M)" for m, n in zip(moyennes, nb_matchs)],
-            textposition="outside",
-            marker=dict(
-                color=moyennes,
-                colorscale=[[0, "#ef4444"], [0.5, "#f59e0b"], [1, "#22c55e"]],
-                cmin=4, cmax=8,
-                line=dict(color="rgba(201,162,39,0.2)", width=1),
-            ),
-            hovertemplate="<b>%{x}</b><br>Moyenne: %{y:.2f}<br><extra></extra>",
-        ))
+    # ── Par compétition (3 barres : JDR / FotMob / Combiné) ─────────────
+    matches = player_data.get("detail_matchs", [])
+    all_comps_p = sorted({m.get("competition", "") for m in matches if m.get("competition")})
+    if all_comps_p:
+        SOURCES_BAR = [
+            ("Combiné", "note",        "#e6e0d0"),
+            ("JDR",     "jdr_note",    "#c9a227"),
+            ("FotMob",  "fotmob_note", "#3b82f6"),
+        ]
+        fig_bar = go.Figure()
+        for src_name, src_key, src_color in SOURCES_BAR:
+            avgs = []
+            for comp in all_comps_p:
+                vals = [float(m[src_key]) for m in matches
+                        if m.get("competition") == comp and m.get(src_key) is not None]
+                avgs.append(round(sum(vals) / len(vals), 2) if vals else None)
+            fig_bar.add_trace(go.Bar(
+                name=src_name,
+                x=all_comps_p,
+                y=avgs,
+                marker_color=src_color,
+                text=[f"{v:.2f}" if v is not None else "" for v in avgs],
+                textposition="outside",
+                hovertemplate=f"<b>{src_name}</b><br>%{{x}}<br>%{{y:.2f}}/10<extra></extra>",
+            ))
         fig_bar.update_layout(
-            yaxis=dict(range=[0, 10.5]),
-            showlegend=False,
-            height=320,
+            barmode="group",
+            yaxis=dict(range=[0, 11]),
+            height=340,
+            legend=dict(orientation="h", yanchor="top", y=-0.18, xanchor="center", x=0.5),
             hoverlabel=dict(bgcolor="#0c1624", bordercolor="#1e3050", font_family="DM Mono, monospace"),
         )
-        apply_chart_theme(fig_bar, "Moyenne par compétition")
+        apply_chart_theme(fig_bar, "Moyenne par compétition · JDR / FotMob / Combiné")
+        fig_bar.update_layout(margin=dict(b=60))
         st.plotly_chart(fig_bar, use_container_width=True)
 
     # ── Historique des matchs ─────────────────────────────────────────────
@@ -1396,8 +1469,8 @@ def main() -> None:
         render_sidebar(df_empty)
         return
 
-    df = flatten_to_df(articles)
-    selected_comps, selected_players = render_sidebar(df)
+    matches_df = stats_to_matches_df(stats)
+    selected_comps, selected_players = render_sidebar(matches_df)
 
     # Hero
     st.markdown("""
@@ -1405,16 +1478,16 @@ def main() -> None:
     <div class="hero-bg-mark">REAL MADRID</div>
     <span class="hero-eyebrow">Saison 2025 — 2026</span>
     <h1 class="hero-title">REAL MADRID<br><span class="hero-title-gold">Notes de Match</span></h1>
-    <span class="hero-sub">Le Journal du Real · Analyse de performance</span>
+    <span class="hero-sub">Le Journal du Real · FotMob · Analyse de performance</span>
     <div class="hero-rule"></div>
 </div>
 """, unsafe_allow_html=True)
 
     # Métriques globales
     n_articles = len(articles)
-    n_players = df["joueur"].nunique() if not df.empty else 0
-    avg_note = f"{df['note'].mean():.2f}" if not df.empty and df["note"].notna().any() else "—"
-    n_comps = df["competition"].nunique() if not df.empty else 0
+    n_players = matches_df["joueur"].nunique() if not matches_df.empty else 0
+    avg_note = f"{matches_df['note'].mean():.2f}" if not matches_df.empty and matches_df["note"].notna().any() else "—"
+    n_comps = matches_df["competition"].nunique() if not matches_df.empty else 0
 
     st.markdown(f"""
 <div class="metrics-grid">
@@ -1450,19 +1523,19 @@ def main() -> None:
         "Profil joueur",
     ])
 
-    df_filtered = df[df["competition"].isin(selected_comps)] if selected_comps else df
+    mdf_filtered = matches_df[matches_df["competition"].isin(selected_comps)] if selected_comps else matches_df
 
     with tab1:
         tab_tableau(stats, selected_comps, selected_players)
 
     with tab2:
-        tab_evolution(df_filtered, selected_players, selected_comps)
+        tab_evolution(mdf_filtered, selected_players, selected_comps)
 
     with tab3:
         tab_comparaison(stats, selected_players, selected_comps)
 
     with tab4:
-        tab_detail(df_filtered, selected_players, selected_comps)
+        tab_detail(mdf_filtered, selected_players, selected_comps)
 
     with tab5:
         tab_profil_joueur(stats)
