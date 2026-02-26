@@ -65,6 +65,7 @@ def inject_css() -> None:
     st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Outfit:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0');
 
 /* ─── Variables ─────────────────────────────── */
 :root {
@@ -123,6 +124,15 @@ body,
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
+}
+/* Icône Material Symbols pour les boutons collapse/expand de la sidebar */
+[data-testid="stSidebarCollapseButton"] button,
+[data-testid="stSidebarCollapsedControl"] button,
+[data-testid="collapsedControl"] button {
+    font-family: 'Material Symbols Outlined' !important;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24 !important;
+    color: var(--text-2) !important;
+    font-size: 20px !important;
 }
 .block-container {
     padding-top: 0.5rem !important;
