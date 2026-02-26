@@ -65,7 +65,6 @@ def inject_css() -> None:
     st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Outfit:wght@300;400;500;600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0');
 
 /* ─── Variables ─────────────────────────────── */
 :root {
@@ -125,15 +124,57 @@ body,
     visibility: visible !important;
     opacity: 1 !important;
 }
-/* Icône Material Symbols pour les boutons collapse/expand de la sidebar */
+/* Boutons collapse/expand sidebar — masquer le texte icône, afficher un chevron CSS */
 [data-testid="stSidebarCollapseButton"] button,
 [data-testid="stSidebarCollapsedControl"] button,
 [data-testid="collapsedControl"] button {
-    font-family: 'Material Symbols Outlined' !important;
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24 !important;
-    color: var(--text-2) !important;
-    font-size: 20px !important;
+    color: transparent !important;
+    font-size: 0 !important;
+    overflow: hidden !important;
+    position: relative !important;
+    width: 2rem !important;
+    height: 2rem !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: var(--r) !important;
+    transition: border-color 0.2s, background 0.2s !important;
 }
+[data-testid="stSidebarCollapseButton"] button *,
+[data-testid="stSidebarCollapsedControl"] button *,
+[data-testid="collapsedControl"] button * {
+    font-size: 0 !important;
+    color: transparent !important;
+}
+[data-testid="stSidebarCollapseButton"] button::after {
+    content: '«';
+    font-size: 16px;
+    color: var(--text-2);
+    font-family: 'Outfit', sans-serif;
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    transition: color 0.2s;
+}
+[data-testid="stSidebarCollapsedControl"] button::after,
+[data-testid="collapsedControl"] button::after {
+    content: '»';
+    font-size: 16px;
+    color: var(--text-2);
+    font-family: 'Outfit', sans-serif;
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    transition: color 0.2s;
+}
+[data-testid="stSidebarCollapseButton"] button:hover,
+[data-testid="stSidebarCollapsedControl"] button:hover,
+[data-testid="collapsedControl"] button:hover {
+    border-color: var(--border-2) !important;
+    background: var(--elevated) !important;
+}
+[data-testid="stSidebarCollapseButton"] button:hover::after,
+[data-testid="stSidebarCollapsedControl"] button:hover::after,
+[data-testid="collapsedControl"] button:hover::after { color: var(--gold) !important; }
 .block-container {
     padding-top: 0.5rem !important;
     padding-left: 2.5rem !important;
@@ -644,6 +685,37 @@ hr { border: none !important; border-top: 1px solid var(--border) !important; ma
 }
 
 /* ══════════════════════════════════════════════
+   PILLS (sidebar toggle groups)
+══════════════════════════════════════════════ */
+[data-testid="stSidebar"] [data-testid="stPills"] {
+    gap: 5px !important;
+    flex-wrap: wrap !important;
+    padding: 2px 0 4px !important;
+}
+[data-testid="stSidebar"] [data-testid="stPills"] button {
+    background: var(--elevated) !important;
+    border: 1px solid var(--border-2) !important;
+    color: var(--muted) !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 0.74rem !important;
+    border-radius: 100px !important;
+    padding: 3px 11px !important;
+    transition: border-color 0.15s, color 0.15s, background 0.15s, box-shadow 0.15s !important;
+    white-space: nowrap !important;
+}
+[data-testid="stSidebar"] [data-testid="stPills"] button:hover {
+    border-color: rgba(201,162,39,0.4) !important;
+    color: var(--text-2) !important;
+}
+[data-testid="stSidebar"] [data-testid="stPills"] button[aria-selected="true"],
+[data-testid="stSidebar"] [data-testid="stPills"] button[aria-pressed="true"] {
+    background: var(--gold-dim) !important;
+    border-color: var(--gold) !important;
+    color: var(--gold) !important;
+    box-shadow: 0 0 8px rgba(201,162,39,0.15) !important;
+}
+
+/* ══════════════════════════════════════════════
    FOOTER
 ══════════════════════════════════════════════ */
 .footer-wrap { margin-top: 2.5rem; padding-bottom: 1.2rem; }
@@ -827,6 +899,19 @@ def color_note(val) -> str:
 # Sidebar
 # ---------------------------------------------------------------------------
 
+_COMP_ICONS: dict[str, str] = {
+    "Liga":                    "🇪🇸  Liga",
+    "Ligue des Champions":     "⭐  C1",
+    "Coupe du Roi":            "👑  Copa",
+    "Supercoupe d'Espagne":    "🔶  Supercoupe",
+    "Intercontinental":        "🌍  Intercont.",
+    "Amical":                  "🤝  Amical",
+}
+
+_SRC_OPTIONS = ["jdr", "fotmob"]
+_SRC_LABELS  = {"jdr": "📰  JDR", "fotmob": "⚽  FotMob"}
+
+
 def render_sidebar(df: pd.DataFrame) -> tuple[list[str], bool, bool]:
     logo_b64 = _load_logo_b64()
     logo_html = (
@@ -846,25 +931,40 @@ def render_sidebar(df: pd.DataFrame) -> tuple[list[str], bool, bool]:
 
     all_comps = sorted(df["competition"].unique()) if not df.empty else []
 
-    # Checkboxes par compétition
+    # Pills par compétition
     st.sidebar.markdown(
         '<span class="sidebar-section-label">Compétitions</span>',
         unsafe_allow_html=True,
     )
-    selected_comps = [
-        comp for comp in all_comps
-        if st.sidebar.checkbox(comp, value=True, key=f"comp_{comp}")
-    ]
+    selected_comps: list[str] = st.sidebar.pills(
+        label="comps",
+        options=all_comps,
+        selection_mode="multi",
+        default=all_comps,
+        format_func=lambda c: _COMP_ICONS.get(c, c),
+        key="pills_comps",
+        label_visibility="collapsed",
+    ) or []
 
     st.sidebar.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
 
-    # Sources de données
+    # Pills sources de données
     st.sidebar.markdown(
         '<span class="sidebar-section-label">Sources de données</span>',
         unsafe_allow_html=True,
     )
-    show_jdr    = st.sidebar.checkbox("JDR",    value=True, key="src_jdr")
-    show_fotmob = st.sidebar.checkbox("FotMob", value=True, key="src_fotmob")
+    selected_sources: list[str] = st.sidebar.pills(
+        label="sources",
+        options=_SRC_OPTIONS,
+        selection_mode="multi",
+        default=_SRC_OPTIONS,
+        format_func=lambda s: _SRC_LABELS[s],
+        key="pills_sources",
+        label_visibility="collapsed",
+    ) or []
+
+    show_jdr    = "jdr"    in selected_sources
+    show_fotmob = "fotmob" in selected_sources
 
     return selected_comps, show_jdr, show_fotmob
 
