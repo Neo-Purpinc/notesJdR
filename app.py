@@ -110,10 +110,22 @@ body,
     font-family: 'Outfit', sans-serif !important;
     color: var(--text) !important;
 }
-/* Keep header visible — sidebar toggle button lives inside it in Streamlit 1.28+ */
+/* Header : transparent mais pas caché (le toggle sidebar y vit) */
 [data-testid="stHeader"] { background: transparent !important; border: none !important; }
 [data-testid="stDecoration"] { display: none !important; }
-#MainMenu, footer, [data-testid="stToolbar"] { visibility: hidden !important; }
+#MainMenu, footer { visibility: hidden !important; }
+/* On cache uniquement les actions du toolbar, pas le toolbar entier */
+[data-testid="stToolbarActions"] { visibility: hidden !important; }
+/* Force le bouton sidebar toujours visible (toutes versions Streamlit) */
+[data-testid="stSidebarCollapsedControl"],
+[data-testid="stSidebarCollapseButton"],
+[data-testid="stSidebarCollapsedControl"] button,
+[data-testid="stSidebarCollapseButton"] button,
+[data-testid="collapsedControl"] {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
 .block-container {
     padding-top: 0.5rem !important;
     padding-left: 2.5rem !important;
