@@ -881,7 +881,7 @@ def tab_tableau(stats: list[dict], selected_comps: list[str], selected_players: 
             horizontal=True,
             key="tab_sort_by",
         )
-    sort_key = {"Combiné": "moyenne_globale", "JDR": "moyenne_jdr", "FotMob": "moyenne_fotmob"}[sort_label]
+    sort_key = {"Combiné": "Moy. globale", "JDR": "Moy. JDR", "FotMob": "Moy. FotMob"}[sort_label]
     with ctrl2:
         min_matchs = st.slider("Min. matchs notés", 1, 20, 1, key="min_matchs_tab")
 
