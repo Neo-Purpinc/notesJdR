@@ -873,10 +873,24 @@ def tab_tableau(stats: list[dict], selected_comps: list[str], selected_players: 
         and "notés" not in c
     )]
 
-    min_matchs = st.slider("Minimum de matchs notés", 1, 20, 1, key="min_matchs_tab")
-    df_filtered = df[df["Matchs notés"] >= min_matchs]
+    ctrl1, ctrl2 = st.columns([2, 1])
+    with ctrl1:
+        sort_label = st.radio(
+            "Trier par",
+            options=["Combiné", "JDR", "FotMob"],
+            horizontal=True,
+            key="tab_sort_by",
+        )
+    sort_key = {"Combiné": "moyenne_globale", "JDR": "moyenne_jdr", "FotMob": "moyenne_fotmob"}[sort_label]
+    with ctrl2:
+        min_matchs = st.slider("Min. matchs notés", 1, 20, 1, key="min_matchs_tab")
 
-    st.caption(f"{len(df_filtered)} joueurs affichés")
+    df_sorted = df.copy()
+    df_sorted[sort_key] = pd.to_numeric(df_sorted[sort_key], errors="coerce").fillna(0)
+    df_sorted = df_sorted.sort_values(sort_key, ascending=False)
+    df_filtered = df_sorted[df_sorted["Matchs notés"] >= min_matchs]
+
+    st.caption(f"{len(df_filtered)} joueurs affichés · tri : {sort_label}")
 
     styled = df_filtered.style.applymap(color_note, subset=note_cols).format(
         {c: "{:.2f}" for c in note_cols if c in df_filtered.columns},
@@ -964,9 +978,9 @@ def tab_evolution(matches_df: pd.DataFrame, selected_players: list[str], selecte
             fig.add_trace(go.Scatter(
                 x=pdata["date"],
                 y=y_vals,
-                mode="lines+markers" if is_main else "markers",
+                mode="lines+markers",
                 name=trace_name,
-                line=dict(color=lcolor, width=2, dash=dash) if is_main else dict(color=lcolor, width=1),
+                line=dict(color=lcolor, width=2 if is_main else 1.5, dash=dash),
                 marker=dict(color=lcolor, size=7 if is_main else 6, symbol=sym,
                             line=dict(color=_hex_rgba(color, 0.35), width=2)),
                 opacity=alpha,
@@ -1166,81 +1180,121 @@ def tab_detail(matches_df: pd.DataFrame, selected_players: list[str], selected_c
         st.info("Aucune donnée disponible.")
         return
 
-    col1, col2, col3 = st.columns(3)
+    # ── Ligne 1 : compétition + sélecteur de match ───────────────────────
+    base = matches_df[matches_df["competition"].isin(selected_comps)].copy()
+    comps_avail = sorted(base["competition"].unique())
 
+    col1, col2 = st.columns([1, 2])
     with col1:
-        all_players = sorted(matches_df["joueur"].unique())
-        player_filter = st.selectbox(
-            "Joueur",
-            options=["Tous"] + all_players,
-            index=0,
-            key="detail_player",
-        )
-
-    with col2:
         comp_filter = st.selectbox(
             "Compétition",
-            options=["Toutes"] + sorted(matches_df["competition"].unique()),
-            index=0,
+            options=["Toutes"] + comps_avail,
             key="detail_comp",
         )
-
-    with col3:
-        note_min = st.slider("Note minimale (Combiné)", 0, 10, 0, key="detail_note_min")
-
-    mask = matches_df["competition"].isin(selected_comps)
-    if player_filter != "Tous":
-        mask &= matches_df["joueur"] == player_filter
     if comp_filter != "Toutes":
-        mask &= matches_df["competition"] == comp_filter
-    mask &= (matches_df["note"] >= note_min) | matches_df["note"].isna()
+        base = base[base["competition"] == comp_filter]
 
-    df_f = matches_df[mask].copy()
-
-    if df_f.empty:
-        st.warning("Aucun résultat pour ces filtres.")
+    # Build unique match labels sorted newest-first
+    match_index = (
+        base[["date", "adversaire", "competition"]]
+        .drop_duplicates()
+        .sort_values("date", ascending=False)
+        .reset_index(drop=True)
+    )
+    if match_index.empty:
+        st.info("Aucun match pour cette sélection.")
         return
 
-    df_f["Date"] = df_f["date"].dt.strftime("%d/%m/%Y")
+    match_labels = [
+        f"{r['date'].strftime('%d/%m/%Y')} — vs {r['adversaire']}  ({r['competition']})"
+        for _, r in match_index.iterrows()
+    ]
+    with col2:
+        selected_label = st.selectbox("Match", options=match_labels, key="detail_match")
 
-    df_display = df_f[["Date", "joueur", "adversaire", "competition", "jdr_note", "fotmob_note", "note"]].rename(
-        columns={
-            "joueur": "Joueur",
-            "adversaire": "Adversaire",
-            "competition": "Compétition",
-            "jdr_note": "JDR",
-            "fotmob_note": "FotMob",
-            "note": "Combiné",
-        }
-    ).sort_values("Date", ascending=False).reset_index(drop=True)
+    sel = match_index.iloc[match_labels.index(selected_label)]
+    df_match = base[
+        (base["date"] == sel["date"]) &
+        (base["adversaire"] == sel["adversaire"]) &
+        (base["competition"] == sel["competition"])
+    ].copy()
 
-    st.caption(f"{len(df_display)} lignes")
+    # ── Ligne 2 : sources + note minimale ────────────────────────────────
+    sc1, sc2, sc3 = st.columns([1, 1, 2])
+    show_jdr    = sc1.checkbox("JDR",    value=True, key="detail_jdr")
+    show_fotmob = sc2.checkbox("FotMob", value=True, key="detail_fotmob")
 
-    styled = df_display.style.applymap(color_note, subset=["JDR", "FotMob", "Combiné"]).format(
-        {
-            "JDR":     lambda x: "—" if pd.isna(x) else f"{x:.0f}",
-            "FotMob":  lambda x: "—" if pd.isna(x) else f"{x:.1f}",
-            "Combiné": lambda x: "—" if pd.isna(x) else f"{x:.2f}",
-        },
-        na_rep="—",
+    if show_jdr and show_fotmob:
+        min_col, min_label = "note", "Combiné"
+    elif show_jdr:
+        min_col, min_label = "jdr_note", "JDR"
+    else:
+        min_col, min_label = "fotmob_note", "FotMob"
+
+    note_min = sc3.slider(f"Note minimale ({min_label})", 0, 10, 0, key="detail_note_min")
+
+    # Apply note-min filter on the relevant column
+    df_match = df_match[
+        (df_match[min_col] >= note_min) | df_match[min_col].isna()
+    ]
+
+    if df_match.empty:
+        st.warning("Aucun joueur pour ces filtres.")
+        return
+
+    # ── Tableau ───────────────────────────────────────────────────────────
+    cols_to_show = ["joueur"]
+    rename_map   = {"joueur": "Joueur"}
+    fmt          = {}
+    color_subset = []
+
+    if show_jdr:
+        cols_to_show.append("jdr_note");  rename_map["jdr_note"] = "JDR"
+        fmt["JDR"] = lambda x: "—" if pd.isna(x) else f"{x:.0f}"
+        color_subset.append("JDR")
+    if show_fotmob:
+        cols_to_show.append("fotmob_note"); rename_map["fotmob_note"] = "FotMob"
+        fmt["FotMob"] = lambda x: "—" if pd.isna(x) else f"{x:.1f}"
+        color_subset.append("FotMob")
+    if show_jdr and show_fotmob:
+        cols_to_show.append("note"); rename_map["note"] = "Combiné"
+        fmt["Combiné"] = lambda x: "—" if pd.isna(x) else f"{x:.2f}"
+        color_subset.append("Combiné")
+
+    # Add goals/assists if FotMob data present
+    if show_fotmob:
+        cols_to_show += ["goals", "assists"]
+        rename_map.update({"goals": "Buts", "assists": "Passes D."})
+
+    df_display = (
+        df_match[cols_to_show]
+        .rename(columns=rename_map)
+        .sort_values("Joueur")
+        .reset_index(drop=True)
     )
-    st.dataframe(styled, use_container_width=True, height=600)
 
-    # Stats rapides
-    if player_filter != "Tous" and not df_f.empty:
-        st.markdown("---")
-        st.subheader(f"Résumé — {player_filter}")
-        rated_f  = df_f[df_f["note"].notna()]
-        jdr_f    = df_f[df_f["jdr_note"].notna()]
-        fm_f     = df_f[df_f["fotmob_note"].notna()]
-        non_noted = int(df_f["note"].isna().sum())
-        mc1, mc2, mc3, mc4, mc5, mc6 = st.columns(6)
-        mc1.metric("Matchs notés", len(rated_f))
-        mc2.metric("Non notés", non_noted)
-        mc3.metric("Total", len(df_f))
-        mc4.metric("Moy. Combiné", f"{rated_f['note'].mean():.2f}" if not rated_f.empty else "—")
-        mc5.metric("Moy. JDR",    f"{jdr_f['jdr_note'].mean():.2f}" if not jdr_f.empty else "—")
-        mc6.metric("Moy. FotMob", f"{fm_f['fotmob_note'].mean():.2f}" if not fm_f.empty else "—")
+    st.caption(f"{len(df_display)} joueurs · {sel['date'].strftime('%d/%m/%Y')} vs {sel['adversaire']}")
+
+    styled = df_display.style
+    if color_subset:
+        styled = styled.applymap(color_note, subset=color_subset)
+    if fmt:
+        styled = styled.format(fmt, na_rep="—")
+    st.dataframe(styled, use_container_width=True, height=min(600, 55 + 35 * len(df_display)))
+
+    # ── Résumé du match ───────────────────────────────────────────────────
+    st.markdown("---")
+    mc = st.columns(4)
+    mc[0].metric("Joueurs", len(df_match))
+    if show_jdr:
+        jdr_v = df_match["jdr_note"].dropna()
+        mc[1].metric("Moy. JDR", f"{jdr_v.mean():.2f}" if not jdr_v.empty else "—")
+    if show_fotmob:
+        fm_v = df_match["fotmob_note"].dropna()
+        mc[2].metric("Moy. FotMob", f"{fm_v.mean():.2f}" if not fm_v.empty else "—")
+    if show_jdr and show_fotmob:
+        comb_v = df_match["note"].dropna()
+        mc[3].metric("Moy. Combiné", f"{comb_v.mean():.2f}" if not comb_v.empty else "—")
 
 
 # ---------------------------------------------------------------------------
