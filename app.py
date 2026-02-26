@@ -961,7 +961,8 @@ html,body{{background:#060f1c;overflow:hidden;font-family:-apple-system,sans-ser
 .btn:hover{{background:#e8e8e8}}
 .btn.active{{background:#fff;color:#c9a227;border-right-color:#e0e0e0}}
 .icon-wrap{{display:flex;align-items:center;justify-content:center;
-  background:#fff;border-radius:4px;padding:3px}}
+  border-radius:4px;padding:3px;background:#c0c0c0;transition:background .15s}}
+.btn.active .icon-wrap{{background:#fff}}
 .btn img{{height:36px;max-width:56px;object-fit:contain;
   filter:grayscale(100%) opacity(35%);transition:filter .15s}}
 .btn.active img{{filter:none}}
@@ -996,6 +997,7 @@ function render(){{
   }});
 }}
 render();
+if(window.Streamlit){{Streamlit.setComponentReady();}}
 </script></body></html>"""
 
     result = components.html(html_str, height=height, scrolling=False)
