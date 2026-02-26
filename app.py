@@ -47,7 +47,7 @@ COLOR_SCALE = {
 @st.cache_resource
 def _load_logo_b64() -> str:
     """Charge le logo JDR en base64 (mis en cache pour la session)."""
-    path = Path("logo-jdr.jpg")
+    path = Path("images/logo-jdr.jpg")
     if path.exists():
         return base64.b64encode(path.read_bytes()).decode()
     return ""
@@ -894,7 +894,8 @@ def _fetch_logo_as_data_uri(src: str) -> str:
             return ""
         suffix = path.suffix.lower().lstrip(".")
         mime = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png",
-                "svg": "image/svg+xml", "webp": "image/webp"}.get(suffix, "image/png")
+                "svg": "image/svg+xml", "webp": "image/webp",
+                "avif": "image/avif", "gif": "image/gif"}.get(suffix, "image/png")
         return f"data:{mime};base64,{base64.b64encode(path.read_bytes()).decode()}"
     # HTTP URL — fetch server-side to avoid iframe CORS issues
     try:
@@ -908,10 +909,10 @@ def _fetch_logo_as_data_uri(src: str) -> str:
 
 
 _COMP_LOGOS: dict[str, str] = {
-    "Liga":                 "la-liga.png",
-    "Ligue des Champions":  "champions-league.svg",
-    "Coupe du Roi":         "copa-del-rey.png",
-    "Supercoupe d'Espagne": "supercopa.png",
+    "Liga":                 "images/la-liga.png",
+    "Ligue des Champions":  "images/champions-league.svg",
+    "Coupe du Roi":         "images/copa-del-rey.png",
+    "Supercoupe d'Espagne": "images/supercopa.png",
     "Intercontinental":     "",
     "Amical":               "",
 }
@@ -930,7 +931,7 @@ def _sidebar_toggle_group(
     logos: dict[str, str],
     labels: dict[str, str],
     key: str,
-    height: int = 68,
+    height: int = 74,
 ) -> list[str]:
     """Connected rectangular button group rendered as an HTML component."""
     if key not in st.session_state:
@@ -951,12 +952,20 @@ def _sidebar_toggle_group(
     html_str = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><style>
 *{{margin:0;padding:0;box-sizing:border-box}}
 html,body{{background:#060f1c;overflow:hidden;font-family:-apple-system,sans-serif}}
-.grp{{display:flex;width:100%;height:60px;border:1px solid #1e3050;border-radius:3px;overflow:hidden}}
-.btn{{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;padding:4px 3px;background:#0c1624;border:none;border-right:1px solid #1e3050;color:#445566;font-size:0.55rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s,color .15s}}
+.grp{{display:flex;width:100%;height:64px;border:1px solid #1e3050;border-radius:3px;overflow:hidden}}
+.btn{{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;
+  padding:5px 4px;background:#0c1624;border:none;border-right:1px solid #1e3050;
+  color:#3a4f64;font-size:0.55rem;letter-spacing:.06em;text-transform:uppercase;
+  cursor:pointer;transition:background .15s,color .15s}}
 .btn:last-child{{border-right:none}}
-.btn:hover{{background:#111e30;color:#8fa0b2}}
-.btn.active{{background:rgba(201,162,39,.1);color:#c9a227;border-right-color:rgba(201,162,39,.25)}}
-.btn img{{height:32px;max-width:52px;object-fit:contain}}
+.btn:hover{{background:#101e30}}
+.btn.active{{background:#111e30;color:#c9a227;border-right-color:rgba(201,162,39,.3)}}
+.icon-wrap{{display:flex;align-items:center;justify-content:center;
+  border-radius:4px;padding:3px;transition:background .15s}}
+.btn.active .icon-wrap{{background:#fff}}
+.btn img{{height:36px;max-width:56px;object-fit:contain;
+  filter:grayscale(100%) opacity(35%);transition:filter .15s}}
+.btn.active img{{filter:none}}
 .lbl{{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
 </style></head><body>
 <div class="grp" id="g"></div>
@@ -969,13 +978,14 @@ function render(){{
     const b=document.createElement('button');
     b.className='btn'+(sel.includes(item.value)?' active':'');
     if(item.logo){{
+      const wrap=document.createElement('div');wrap.className='icon-wrap';
       const img=document.createElement('img');
       img.src=item.logo;
       img.onerror=()=>{{
-        img.remove();
+        wrap.remove();
         const s=document.createElement('span');s.className='lbl';s.textContent=item.label;b.appendChild(s);
       }};
-      b.appendChild(img);
+      wrap.appendChild(img);b.appendChild(wrap);
     }}else{{
       const s=document.createElement('span');s.className='lbl';s.textContent=item.label;b.appendChild(s);
     }}
@@ -1031,13 +1041,8 @@ def render_sidebar(df: pd.DataFrame) -> tuple[list[str], bool, bool]:
     st.sidebar.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
 
     # Button group — sources
-    fotmob_svg = (
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 32">'
-        '<text x="2" y="24" font-family="Arial Black,Impact,sans-serif" font-weight="900" '
-        'font-size="22" fill="#01d47e" letter-spacing="-0.5">fotmob</text></svg>'
-    )
-    fotmob_logo = "data:image/svg+xml;base64," + base64.b64encode(fotmob_svg.encode()).decode()
-    jdr_logo = f"data:image/jpeg;base64,{logo_b64}" if logo_b64 else ""
+    fotmob_logo = _fetch_logo_as_data_uri("images/fotmob.avif")
+    jdr_logo    = _fetch_logo_as_data_uri("images/jdr.png")
 
     st.sidebar.markdown(
         '<span class="sidebar-section-label">Sources de données</span>',
